@@ -1,0 +1,75 @@
+<?php
+
+namespace App\Http\Controllers\DiamondMaster;
+
+use App\Models\DiamondShade;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+
+class DiamondShadeController extends Controller
+{
+    public function index(Request $request)
+    {
+        if ($request->ajax()) {
+            $shades = DiamondShade::all();
+            return response()->json($shades);
+        }
+        return view('admin.DiamondMaster.Shade.index');
+    }
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'ds_name' => 'nullable|string',
+            'ds_short_name' => 'nullable|string',
+            'ds_alise' => 'nullable|string',
+            'ds_remark' => 'nullable|string',
+            'ds_display_in_front' => 'nullable|integer',
+            'ds_sort_order' => 'nullable|integer',
+            'date_added' => 'nullable|date',
+            'date_modify' => 'nullable|date',
+        ]);
+
+        DiamondShade::create($data);
+
+        return redirect()->route('shades.index')
+            ->with('success', 'Record added successfully.');
+    }
+
+    public function update(Request $request, $id)
+    {
+        $shade = DiamondShade::findOrFail($id);
+
+        $data = $request->validate([
+            'ds_name' => 'nullable|string',
+            'ds_short_name' => 'nullable|string',
+            'ds_alise' => 'nullable|string',
+            'ds_remark' => 'nullable|string',
+            'ds_display_in_front' => 'nullable|integer',
+            'ds_sort_order' => 'nullable|integer',
+            'date_added' => 'nullable|date',
+            'date_modify' => 'nullable|date',
+        ]);
+
+        $shade->update($data);
+
+        return redirect()->route('shades.index')
+            ->with('success', 'Record updated successfully.');
+    }
+
+    public function destroy($id)
+    {
+        $shade = DiamondShade::findOrFail($id);
+        $shade->delete();
+
+        return redirect()->route('shades.index')
+            ->with('success', 'Record deleted successfully.');
+    }
+
+    public function show(DiamondShade $id)
+    {
+        if (request()->ajax()) {
+            return response()->json($id);
+        }
+        return view('admin.diamond_master.shade.edit', compact('shade'));
+    }
+}
