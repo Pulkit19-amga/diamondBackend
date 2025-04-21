@@ -133,5 +133,20 @@
             </ul>
         </li>
 
+        <!-- Vedore -->
+        <li class="menu-item {{ request()->is('/vendors') ? 'active open' : '' }}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-home-smile"></i>
+                <div class="text-truncate" data-i18n="Vendor">Vendor</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item active">
+                    <a href="{{ route('vendor.index') }}" class="menu-link">
+                        <div class="text-truncate" data-i18n="vendor">Vendor List</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
     </ul>
 </aside>

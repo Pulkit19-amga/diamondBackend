@@ -8,6 +8,7 @@ use App\Http\Controllers\DiamondMaster\DiamondCuletController;
 use App\Http\Controllers\DiamondMaster\DiamondShadeController;
 use App\Http\Controllers\DiamondMaster\DiamondShapeController;
 use App\Http\Controllers\DiamondMaster\DiamondGirdleController;
+use App\Http\Controllers\DiamondMaster\DiamondVendorController;
 use App\Http\Controllers\DiamondMaster\DiamondSymmetryController;
 use App\Http\Controllers\DiamondMaster\DiamondLabMasterController;
 use App\Http\Controllers\DiamondMaster\DiamondFancyColorController;
@@ -159,5 +160,13 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
         Route::get('/diamond-fancy-color-intensity/{id}', 'show')->name('fancy-color-intensity.show');
         Route::put('/diamond-fancy-color-intensity/{id}', 'update')->name('fancy-color-intensity.update');
         Route::delete('/diamond-fancy-color-intensity/{id}', 'destroy')->name('fancy-color-intensity.destroy');
+    });
+
+    Route::controller(DiamondVendorController::class)->group(function() {
+        Route::get('/vendor',        'index')->name('vendor.index');
+        Route::post('/vendor',       'store')->name('vendor.store');
+        Route::get('/vendor/{id}',   'show')->name('vendor.show');
+        Route::put('/vendor/{id}',   'update')->name('vendor.update');
+        Route::delete('/vendor/{id}','destroy')->name('vendor.destroy');
     });
 });

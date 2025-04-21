@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 
 class DiamondLabMasterController extends Controller
 {
-    // List all records: For AJAX (JSON) or normal view
     public function index(Request $request)
     {
         if ($request->ajax()) {
@@ -18,7 +17,6 @@ class DiamondLabMasterController extends Controller
         return view('admin.DiamondMaster.Lab.index');
     }
 
-    // Create: (Agar alag create view chahiye; yahan hum AJAX modal approach use kar rahe hain, isliye ye optional)
     public function create()
     {
         return view('admin.DiamondMaster.Lab.create');
@@ -43,14 +41,12 @@ class DiamondLabMasterController extends Controller
                          ->with('success', 'Record added successfully.');
     }
 
-    // Edit form: Return view (here same index view is used for modal editing)
     public function edit($id)
     {
         $lab = DiamondLab::findOrFail($id);
         return view('admin.DiamondMaster.Lab.index', compact('lab'));
     }
 
-    // Show: For AJAX request to get record details
     public function show(DiamondLab $id)
     {
         if (request()->ajax()) {
