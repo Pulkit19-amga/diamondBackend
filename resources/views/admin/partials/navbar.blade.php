@@ -66,13 +66,14 @@
                               <li>
                                 <div class="dropdown-divider my-1"></div>
                               </li>
-                              <li>
-                                <form action="" method="POST" id="logout-form" style="display: none;">
-                                  @csrf
-                              </form>                              
-                              <a class="dropdown-item" href="javascript:void(0);" onclick="document.getElementById('logout-form').submit();">
-                                  <i class="bx bx-power-off bx-md me-3"></i><span>Log Out</span>
-                              </a>
+                              <form id="logout-form" action="{{ route('admin.logout') }}" method="POST" style="display: none;">
+                                @csrf
+                            </form>
+                            
+                            <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                <i class="mdi mdi-logout text-muted fs-lg align-middle me-1"></i>
+                                <span class="align-middle" data-key="t-logout">Logout</span>
+                            </a>
                               
                               </li>
                             </ul>

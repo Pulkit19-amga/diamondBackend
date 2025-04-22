@@ -23,6 +23,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::get('/diamond-shapes', [ShapeController::class, 'getFrontShapes']);
+Route::get('/diamond-colors', [ShapeController::class, 'getFrontColors']);
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
