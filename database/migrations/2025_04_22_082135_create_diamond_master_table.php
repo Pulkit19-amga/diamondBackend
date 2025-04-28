@@ -28,21 +28,20 @@ class CreateDiamondMasterTable extends Migration
 
             // pricing
             $table->string('delivery_days', 25)->nullable();
-            $table->decimal('price_per_carat', 10, 2)->default(0);
-            $table->decimal('msrp_price', 10, 2)->default(0);
-            $table->decimal('vendor_price', 10, 2)->default(0);
-            $table->decimal('vendor_rap_disc', 10, 2)->default(0);
-            $table->decimal('vendor_amount', 10, 2)->default(0);
-            $table->decimal('price', 10, 2)->default(0);
-            $table->decimal('diamond_price1', 10, 2)->default(0);
-            $table->decimal('diamond_price2', 10, 2)->default(0);
-            $table->decimal('diamond_price3', 10, 2)->default(0);
-            $table->decimal('diamond_price4', 10, 2)->default(0);
-            $table->decimal('rap_percentage', 5, 2)->default(0);
-            $table->decimal('memo_price_per_carat', 10, 2)->nullable();
-            $table->decimal('memo_rap_disc', 10, 2)->nullable();
-            $table->decimal('memo_price', 10, 2)->nullable();
-            
+            $table->float('price_per_carat')->default(0);
+            $table->float('msrp_price')->default(0);
+            $table->float('vendor_price')->default(0);
+            $table->float('vendor_rap_disc')->default(0);
+            $table->float('vendor_amount')->default(0);
+            $table->float('price')->default(0);
+            $table->double('diamond_price1')->default(0);
+            $table->double('diamond_price2')->default(0);
+            $table->double('diamond_price3')->default(0);
+            $table->double('diamond_price4')->default(0);
+            $table->float('rap_percentage')->default(0);
+            $table->float('memo_price_per_carat')->nullable();
+            $table->float('memo_rap_disc')->nullable();
+            $table->double('memo_price')->nullable();
 
             // certificate
             $table->unsignedInteger('certificate_company')->default(0);

@@ -11,5 +11,9 @@ class DiamondPolish extends Model
         'name', 'alias', 'short_name', 'full_name', 'pol_status', 'sort_order', 'date_added', 'date_modify'
     ];
     public $timestamps = false;
+    public function diamondMasters()
+    {
+        return $this->hasMany(DiamondMaster::class);
+    }
 }
 

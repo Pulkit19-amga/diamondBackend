@@ -8,6 +8,7 @@ use App\Http\Controllers\api\ColorController;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\ShapeController;
 use App\Http\Controllers\Api\LogoutController;
+use App\Http\Controllers\api\PolishController;
 use App\Http\Controllers\api\ClarityController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\RegisterController;
@@ -38,6 +39,8 @@ Route::get('diamonds/by-color/{color_id}', [ColorController::class, 'filterDiamo
 Route::get('diamonds/by-cut/{cut_id}', [CutController::class, 'filterDiamondsByCut']);
 
 Route::get('diamonds/by-clarity/{clarity_id}', [ClarityController::class, 'filterDiamondsByClarity']);
+
+Route::get('diamonds/by-polish/{polish_id}', [PolishController::class, 'filterDiamondsByPolish']);
 
 Route::post('/register', [RegisterController::class, 'register']);
 
