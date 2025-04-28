@@ -8,6 +8,7 @@ use App\Http\Controllers\DiamondMaster\DiamondCuletController;
 use App\Http\Controllers\DiamondMaster\DiamondShadeController;
 use App\Http\Controllers\DiamondMaster\DiamondShapeController;
 use App\Http\Controllers\DiamondMaster\DiamondGirdleController;
+use App\Http\Controllers\DiamondMaster\DiamondMasterController;
 use App\Http\Controllers\DiamondMaster\DiamondVendorController;
 use App\Http\Controllers\DiamondMaster\DiamondSymmetryController;
 use App\Http\Controllers\DiamondMaster\DiamondLabMasterController;
@@ -170,4 +171,13 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
         Route::put('/vendor/{id}',   'update')->name('vendor.update');
         Route::delete('/vendor/{id}','destroy')->name('vendor.destroy');
     });
+
+    Route::controller(DiamondMasterController::class)->group(function(){
+        Route::get('/diamond-master', 'index')->name('diamond-master.index');
+        Route::post('/diamond-master', 'store')->name('diamond-master.store');
+        Route::get('/diamond-master/{id}/edit', 'edit')->name('diamond-master.edit');
+        Route::put('/diamond-master/{id}', 'update')->name('diamond-master.update');
+        Route::delete('/diamond-master/{id}', 'destroy')->name('diamond-master.destroy');
+        Route::put('/diamond-master/{id}/status', 'updateStatus')->name('diamond-master.updateStatus');
+    }); 
 });

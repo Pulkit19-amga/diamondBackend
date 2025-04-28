@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\DiamondMaster;
 use Illuminate\Database\Eloquent\Model;
 
 class DiamondColor extends Model
@@ -20,4 +21,9 @@ class DiamondColor extends Model
         'date_added',
         'date_modify',
     ];
+
+    public function diamondMasters()
+    {
+        return $this->hasMany(DiamondMaster::class);
+    }
 }

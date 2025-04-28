@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\DiamondMaster;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class DiamondShape extends Model
 {
@@ -29,5 +30,10 @@ class DiamondShape extends Model
         'date_added',
         'date_modify',
     ];
+
+    public function diamondMasters()
+    {
+        return $this->hasMany(DiamondMaster::class);
+    }
     
 }

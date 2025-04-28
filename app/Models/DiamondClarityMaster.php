@@ -22,4 +22,10 @@ class DiamondClarityMaster extends Model
 
     // Agar aapke migration me timestamps nahi hain, to isse false set karein
     public $timestamps = false;
+
+    public function diamondMasters()
+    {
+        return $this->hasMany(DiamondMaster::class);
+    }
 }
+
