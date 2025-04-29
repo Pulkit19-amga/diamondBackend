@@ -17,11 +17,6 @@ class DiamondLabMasterController extends Controller
         return view('admin.DiamondMaster.Lab.index');
     }
 
-    public function create()
-    {
-        return view('admin.DiamondMaster.Lab.create');
-    }
-
     // Store new record
     public function store(Request $request)
     {
@@ -93,7 +88,6 @@ class DiamondLabMasterController extends Controller
     {
         $lab = DiamondLab::findOrFail($id);
         $lab->delete();
-
         return redirect()->route('diamondlab.index')
             ->with('success', 'Record deleted successfully.');
     }

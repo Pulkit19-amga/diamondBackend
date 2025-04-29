@@ -70,14 +70,6 @@
             <label for="sort_order">Sort Order</label>
             <input type="number" class="form-control" id="sort_order" name="sort_order">
           </div>
-          <div class="mb-3">
-            <label for="date_added">Date Added</label>
-            <input type="datetime-local" class="form-control" id="date_added" name="date_added">
-          </div>
-          <div class="mb-3">
-            <label for="date_modify">Date Modified</label>
-            <input type="datetime-local" class="form-control" id="date_modify" name="date_modify">
-          </div>
           <div id="formError" class="text-danger"></div>
         </div>
         <div class="modal-footer">
@@ -116,9 +108,9 @@ $(document).ready(function(){
             <td>${record.alias ?? ''}</td>
             <td>${record.short_name ?? ''}</td>
             <td>${record.sym_status ?? ''}</td>
-            <td>${record.sort_order ?? ''}</td>
-            <td>${record.date_added ? record.date_added.substring(0,10) : ''}</td>
-            <td>${record.date_modify ? record.date_modify.substring(0,10) : ''}</td>
+            <td><input type="number" value="${record.sort_order}" class="sort-order" data-id="${record.id}" style="width: 60px;"></td>
+            <td>${record.date_added ? record.date_added : ''}</td>
+            <td>${record.date_modify ? record.date_modify: ''}</td>
             <td>
               <button class="btn btn-sm btn-info editBtn" data-id="${record.id}"><i class="fa fa-edit"></i></button>
               <button class="btn btn-sm btn-danger deleteBtn" data-id="${record.id}"><i class="fa fa-trash"></i></button>
@@ -149,8 +141,6 @@ $(document).ready(function(){
       $('#short_name').val(data.short_name);
       $('#sym_status').val(data.sym_status);
       $('#sort_order').val(data.sort_order);
-      $('#date_added').val(formatDateForInput(data.date_added));
-      $('#date_modify').val(formatDateForInput(data.date_modify));
       $("#saveLabBtn").text('Update');
       $('#keySymbolModal').modal('show');
     });
@@ -185,6 +175,28 @@ $(document).ready(function(){
       }
     });
   });
+
+  $(document).on('blur', '.sort-order', function() {
+            const id = $(this).data('id');
+            const sortOrder = $(this).val();
+
+            $.ajax({
+                url: `{{ url('admin/keyToSymbols') }}/${id}`,
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    _method: 'PUT',
+                    sort_order: sortOrder
+                },
+                success: function() {
+                    toastr.success('Sort order updated successfully!');
+                },
+                error: function() {
+                    toastr.error('Failed to update sort order!');
+                }
+            });
+        });
+
 
   // Delete record
   $(document).on('click', '.deleteBtn', function(){

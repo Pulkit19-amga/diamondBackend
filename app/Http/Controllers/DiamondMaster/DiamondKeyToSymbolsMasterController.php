@@ -31,10 +31,8 @@ class DiamondKeyToSymbolsMasterController extends Controller
             'short_name' => 'nullable|string',
             'sym_status' => 'nullable|integer',
             'sort_order' => 'nullable|integer',
-            'date_added' => 'nullable|date',
-            'date_modify'=> 'nullable|date',
         ]);
-
+         $data['date_added']=now();
         DiamondKeyToSymbols::create($data);
 
         return redirect()->route('keytosymbols.index')
@@ -67,10 +65,8 @@ class DiamondKeyToSymbolsMasterController extends Controller
             'short_name' => 'nullable|string',
             'sym_status' => 'nullable|integer',
             'sort_order' => 'nullable|integer',
-            'date_added' => 'nullable|date',
-            'date_modify'=> 'nullable|date',
         ]);
-
+        $data['date_modify']=now();
         $record->update($data);
 
         return redirect()->route('keytosymbols.index')
