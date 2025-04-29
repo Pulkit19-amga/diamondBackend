@@ -107,7 +107,6 @@ class DiamondPolishMasterController extends Controller
     {
         $polish = DiamondPolish::findOrFail($id);
         $polish->delete();
-
         return redirect()->route('diamondpolish.index')
             ->with('success', 'Polish deleted successfully.');
     }

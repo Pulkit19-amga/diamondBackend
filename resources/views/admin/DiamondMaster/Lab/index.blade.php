@@ -66,14 +66,6 @@
                             <label for="cert_url">Cert URL</label>
                             <input type="text" class="form-control" id="cert_url" name="cert_url">
                         </div>
-                        <div class="mb-3">
-                            <label for="date_added">Date Added</label>
-                            <input type="datetime-local" class="form-control" id="date_added" name="date_added">
-                        </div>
-                        <div class="mb-3">
-                            <label for="date_modify">Date Modified</label>
-                            <input type="datetime-local" class="form-control" id="date_modify" name="date_modify">
-                        </div>
                         <div id="formError" class="text-danger"></div>
                     </div>
                     <div class="modal-footer">
@@ -114,8 +106,8 @@
             <td><input type="number" value="${record.dl_sort_order}" class="sort-order" data-id="${record.dl_id}" style="width: 60px;"></td>
             <td>${record.image ?? ''}</td>
               <td>${record.cert_url ?? ''}</td>
-              <td>${record.date_added ? record.date_added.substring(0,10) : ''}</td>
-              <td>${record.date_modify ? record.date_modify.substring(0,10) : ''}</td>
+              <td>${record.date_added ? record.date_added : ''}</td>
+              <td>${record.date_modify ? record.date_modify: ''}</td>
                <td>
               <button class="btn btn-sm btn-info editBtn" data-id="${record.dl_id}"><i class="fa fa-edit"></i></button>
               <button class="btn btn-sm btn-danger deleteBtn" data-id="${record.dl_id}"><i class="fa fa-trash"></i></button>
@@ -144,8 +136,6 @@
                     $('#dl_sort_order').val(data.dl_sort_order);
                     $('#image').val(data.image);
                     $('#cert_url').val(data.cert_url);
-                    $('#date_added').val(formatDateForInput(data.date_added));
-                    $('#date_modify').val(formatDateForInput(data.date_modify));
                     $('#saveLabBtn').text('Update');
                     $('#labModal').modal('show');
                 });

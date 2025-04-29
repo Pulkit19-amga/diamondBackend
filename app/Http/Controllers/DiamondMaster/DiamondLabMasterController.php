@@ -26,19 +26,18 @@ class DiamondLabMasterController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'dl_name'              => 'nullable|string|max:250',
-            'dl_display_in_front'  => 'nullable|integer',
-            'dl_sort_order'        => 'nullable|integer',
-            'image'                => 'required|string|max:255', // image field required
-            'cert_url'             => 'nullable|string|max:255',
-            'date_added'           => 'nullable|date',
-            'date_modify'          => 'nullable|date',
-        ]);
+            'dl_name' => 'nullable|string|max:250',
+            'dl_display_in_front' => 'nullable|integer',
+            'dl_sort_order' => 'nullable|integer',
+            'image' => 'required|string|max:255', // image field required
+            'cert_url' => 'nullable|string|max:255',
 
+        ]);
+        $data['date_added'] = now();
         DiamondLab::create($data);
 
         return redirect()->route('diamondlab.index')
-                         ->with('success', 'Record added successfully.');
+            ->with('success', 'Record added successfully.');
     }
 
     public function edit($id)
@@ -60,31 +59,34 @@ class DiamondLabMasterController extends Controller
     public function update(Request $request, $id)
     {
         $lab = DiamondLab::findOrFail($id);
-    
-        // If only sort/display are being updated (like in inline AJAX), relax validation
-        if ($request->has('dl_sort_order') || $request->has('dl_display_in_front')) {
+
+        if (
+            ($request->has('dl_sort_order') || $request->has('dl_display_in_front')) &&
+            !$request->has('dl_name') &&
+            !$request->has('image') &&
+            !$request->has('cert_url')
+        ) {
+            // Partial update: just sort/display
             $data = $request->validate([
-                'dl_sort_order'       => 'nullable|integer',
+                'dl_sort_order' => 'nullable|integer',
                 'dl_display_in_front' => 'nullable|integer',
             ]);
         } else {
-            // Full form validation
+            // Full update
             $data = $request->validate([
-                'dl_name'              => 'nullable|string|max:250',
-                'dl_display_in_front'  => 'nullable|integer',
-                'dl_sort_order'        => 'nullable|integer',
-                'image'                => 'required|string|max:255',
-                'cert_url'             => 'nullable|string|max:255',
-                'date_added'           => 'nullable|date',
-                'date_modify'          => 'nullable|date',
+                'dl_name' => 'nullable|string|max:250',
+                'dl_display_in_front' => 'nullable|integer',
+                'dl_sort_order' => 'nullable|integer',
+                'image' => 'required|string|max:255',
+                'cert_url' => 'nullable|string|max:255',
             ]);
         }
-    
+
+        $data['date_modify'] = now();
         $lab->update($data);
-    
+
         return response()->json(['success' => true, 'message' => 'Record updated successfully.']);
     }
-    
 
     // Delete record
     public function destroy($id)
@@ -93,6 +95,6 @@ class DiamondLabMasterController extends Controller
         $lab->delete();
 
         return redirect()->route('diamondlab.index')
-                         ->with('success', 'Record deleted successfully.');
+            ->with('success', 'Record deleted successfully.');
     }
 }
