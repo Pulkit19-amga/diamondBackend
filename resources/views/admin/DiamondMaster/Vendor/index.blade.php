@@ -120,11 +120,7 @@
                                 ['location', 'Location'],
                                 ['offer_days', 'Offer Days'],
                                 ['keep_price_same_ab', 'Keep Price Same for AB', 'select', ['1' => 'Yes', '0' => 'No']],
-                                ['cc_fee', 'CC Fee', 'select', ['1' => 'Yes', '0' => 'No']],
-                                ['date_addded', 'Date Added', 'datetime-local'],
-                                ['added_by', 'Added By', 'number'],
-                                ['date_updated', 'Date Updated', 'datetime-local'],
-                                ['update_by', 'Updated By', 'number'],
+                                ['cc_fee', 'CC Fee', 'select', ['1' => 'Yes', '0' => 'No']],                          
                             ];
                         @endphp
 
