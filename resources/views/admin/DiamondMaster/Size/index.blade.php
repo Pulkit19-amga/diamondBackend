@@ -46,11 +46,6 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body row g-2">
-                        <div class="col-12">
-                            <label>Title</label>
-                            <input type="text" class="form-control" id="title" name="title">
-                        </div>
-
                         <div class="col-6">
                             <label>Size 1</label>
                             <input type="number" step="0.01" class="form-control" id="size1" name="size1">
@@ -78,27 +73,6 @@
                             <label>Sort Order</label>
                             <input type="number" class="form-control" id="sort_order" name="sort_order">
                         </div>
-
-                        <div class="col-6">
-                            <label>Date Added</label>
-                            <input type="datetime-local" class="form-control" id="date_added" name="date_added">
-                        </div>
-
-                        <div class="col-6">
-                            <label>Date Updated</label>
-                            <input type="datetime-local" class="form-control" id="date_updated" name="date_updated">
-                        </div>
-
-                        <div class="col-6">
-                            <label>Added By</label>
-                            <input type="number" class="form-control" id="added_by" name="added_by">
-                        </div>
-
-                        <div class="col-6">
-                            <label>Updated By</label>
-                            <input type="number" class="form-control" id="updated_by" name="updated_by">
-                        </div>
-
                         <div id="formError" class="text-danger mt-2"></div>
                     </div>
 
@@ -145,8 +119,8 @@
                      <input type="number" value="${r.sort_order}" class="sort-order" data-id="${r.id}" style="width: 60px;">
                     </td>
 
-                                <td>${r.date_added ? r.date_added.substring(0, 10) : ''}</td>
-                                <td>${r.date_updated ? r.date_updated.substring(0, 10) : ''}</td>
+                                <td>${r.date_added ? r.date_added :''}</td>
+                                <td>${r.date_updated ? r.date_updated :''}</td>
                                 <td>
                                     <button class="btn btn-sm btn-info editBtn" data-id="${r.id}"><i class="fa fa-edit"></i></button>
                                     <button class="btn btn-sm btn-danger deleteBtn" data-id="${r.id}"><i class="fa fa-trash"></i></button>
@@ -154,7 +128,7 @@
                             </tr>
                         `;
                     });
-                    renderDataTable('sizeTable',rows);
+                    renderDataTable('sizeTable', rows);
                 });
             }
 
@@ -171,16 +145,11 @@
                     $('#sizeForm')[0].reset();
                     $('#formError').text('');
                     $('#record_id').val(data.id);
-                    $('#title').val(data.title);
                     $('#size1').val(data.size1);
                     $('#size2').val(data.size2);
                     $('#retailer_id').val(data.retailer_id);
                     $('#status').val(data.status);
                     $('#sort_order').val(data.sort_order);
-                    $('#date_added').val(formatDateForInput(data.date_added));
-                    $('#date_updated').val(formatDateForInput(data.date_updated));
-                    $('#added_by').val(data.added_by);
-                    $('#updated_by').val(data.updated_by);
                     $('#sizeModal').modal('show');
                     $('#savesizeBtn').text('Update');
                 });
@@ -197,9 +166,10 @@
                             _token: '{{ csrf_token() }}'
                         },
                         success: function() {
-                            row.remove();
+                            let table = $('#sizeTable').DataTable();
+                            const row = table.row($(this).closest('tr'));
+                            table.row(row).remove().draw(false); 
                             toastr.success("Record deleted successfully!");
-                            fetchRecords();
                         },
                         error: function() {
                             toastr.error("Failed to delete the record.");
