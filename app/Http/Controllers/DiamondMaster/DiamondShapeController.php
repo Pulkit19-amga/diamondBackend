@@ -33,10 +33,8 @@ class DiamondShapeController extends Controller
             'display_in_front' => 'nullable|integer',
             'display_in_stud' => 'nullable|integer',
             'sort_order' => 'nullable|integer',
-            'date_added' => 'nullable|date',
-            'date_modify' => 'nullable|date',
         ]);
-
+        $data['date_added'] = now();
         DiamondShape::create($data);
 
         return redirect()->route('shapes.index')
@@ -64,7 +62,7 @@ class DiamondShapeController extends Controller
             'date_added' => 'nullable|date',
             'date_modify' => 'nullable|date',
         ]);
-
+        $data['date_modify'] = now();
         $shape->update($data);
 
         return redirect()->route('shapes.index')

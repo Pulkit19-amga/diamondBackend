@@ -25,9 +25,9 @@ class DiamondShadeController extends Controller
             'ds_remark' => 'nullable|string',
             'ds_display_in_front' => 'nullable|integer',
             'ds_sort_order' => 'nullable|integer',
-            'date_added' => 'nullable|date',
-            'date_modify' => 'nullable|date',
+
         ]);
+        $data['date_added'] = now();
 
         DiamondShade::create($data);
 
@@ -46,10 +46,8 @@ class DiamondShadeController extends Controller
             'ds_remark' => 'nullable|string',
             'ds_display_in_front' => 'nullable|integer',
             'ds_sort_order' => 'nullable|integer',
-            'date_added' => 'nullable|date',
-            'date_modify' => 'nullable|date',
         ]);
-
+        $data['date_modify'] = now();
         $shade->update($data);
 
         return redirect()->route('shades.index')

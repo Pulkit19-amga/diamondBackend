@@ -51,7 +51,7 @@
                             <input type="text" class="form-control" id="ds_name" name="ds_name">
                         </div>
                         <div class="col-6">
-                            <label>Short Nmae</label>
+                            <label>Short Name</label>
                             <input type="text" class="form-control" id="ds_short_name" name="ds_short_name">
                         </div>
                         <div class="col-6">
@@ -64,20 +64,16 @@
                         </div>
                         <div class="col-6">
                             <label for="">Display In Front</label>
-                            <input type="number" class="form-control" id="ds_display_in_front" name="ds_display_in_front">
+                            <select class="form-control" id="ds_display_in_front" name="ds_display_in_front">
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                            </select>
                         </div>
                         <div class="col-6">
                             <label>Sort Order</label>
                             <input type="number" class="form-control" id="ds_sort_order" name="ds_sort_order">
                         </div>
-                        <div class="col-6">
-                            <label>Date Added</label>
-                            <input type="datetime-local" class="form-control" id="date_added" name="date_added">
-                        </div>
-                        <div class="col-6">
-                            <label>Date Modify</label>
-                            <input type="datetime-local" class="form-control" id="date_modify" name="date_modify">
-                        </div>
+                      
                         <div id="formError" class="text-danger mt-2"></div>
                     </div>
                     <div class="modal-footer">
@@ -117,10 +113,14 @@
                     <td>${r.ds_short_name ?? ''}</td>
                     <td>${r.ds_alise ?? ''}</td>
                     <td>${r.ds_remark ?? ''}</td>
-                    <td>${r.ds_display_in_front ?? ''}</td>
-                    <td>${r.ds_sort_order ?? ''}</td>
-                    <td>${r.date_added ? r.date_added.substring(0, 10) : ''}</td>
-                    <td>${r.date_modify ? r.date_modify.substring(0, 10) : ''}</td>
+                    <td>
+                        <input type="checkbox" ${r.ds_display_in_front == 1 ? 'checked' : ''} class="status" data-id="${r.ds_id}">
+                    </td>
+                     <td>
+                     <input type="number" value="${r.ds_sort_order}" class="sort-order" data-id="${r.ds_id}" style="width: 60px;">
+                    </td>
+                    <td>${r.date_added ? r.date_added : ''}</td>
+                    <td>${r.date_modify ? r.date_modify : ''}</td>
                     <td>
                         <button class="btn btn-sm btn-info editBtn" data-id="${r.ds_id}"><i class="fa fa-edit"></i></button>
                         <button class="btn btn-sm btn-danger deleteBtn" data-id="${r.ds_id}"><i class="fa fa-trash"></i></button>
@@ -153,8 +153,6 @@
                     $('#ds_remark').val(data.ds_remark);
                     $('#ds_display_in_front').val(data.ds_display_in_front);
                     $('#ds_sort_order').val(data.ds_sort_order);
-                    $('#date_added').val(formatDateForInput(data.date_added));
-                    $('#date_modify').val(formatDateForInput(data.date_modify));
                     $('#shadeModal').modal('show');
                     $('#saveShadeBtn').text('Update');
                 });
@@ -185,6 +183,48 @@
                         let msg = Object.values(errors).join('<br>');
                         $('#formError').html(msg || 'An error occurred');
                         toastr.error("Failed to save record!");
+                    }
+                });
+            });
+
+            $(document).on('change', '.status', function() {
+                const id = $(this).data('id');
+                const status = $(this).prop('checked') ? 1 : 0;
+
+                $.ajax({
+                    url: `{{ url('admin/shades') }}/${id}`,
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        _method: 'PUT',
+                        ds_display_in_front: status
+                    },
+                    success: function() {
+                        toastr.success('Status updated successfully!');
+                    },
+                    error: function() {
+                        toastr.error('Failed to update Status!');
+                    }
+                });
+            });
+             
+            $(document).on('blur', '.sort-order', function() {
+                const id = $(this).data('id');
+                const sortOrder = $(this).val();
+
+                $.ajax({
+                    url: `{{ url('admin/shades') }}/${id}`,
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        _method: 'PUT',
+                        ds_sort_order: sortOrder
+                    },
+                    success: function() {
+                        toastr.success('Sort order updated successfully!');
+                    },
+                    error: function() {
+                        toastr.error('Failed to update sort order!');
                     }
                 });
             });
