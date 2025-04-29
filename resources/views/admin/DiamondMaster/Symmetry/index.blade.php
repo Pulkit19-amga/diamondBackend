@@ -77,18 +77,7 @@
                         <div class="col-6">
                             <label>Sort Order</label>
                             <input type="number" class="form-control" id="sort_order" name="sort_order">
-                        </div>
-                    
-                        <div class="col-6">
-                            <label>Date Added</label>
-                            <input type="datetime-local" class="form-control" id="date_added" name="date_added">
-                        </div>
-                    
-                        <div class="col-6">
-                            <label>Date Modified</label>
-                            <input type="datetime-local" class="form-control" id="date_modify" name="date_modify">
-                        </div>
-                    
+                        </div>                    
                         <div id="formError" class="text-danger mt-2"></div>
                     </div>
                     
@@ -136,8 +125,9 @@
                      <input type="number" value="${r.sort_order}" class="sort-order" data-id="${r.id}" style="width: 60px;">
                     </td>
 
-                                <td>${r.date_added ? r.date_added.substring(0, 10) : ''}</td>
-                                <td>${r.date_modify ? r.date_modify.substring(0, 10) : ''}</td>
+                                <td>${r.date_added ? r.date_added : ''}</td>
+                                <td>${r.date_modify ? r.date_modify : ''}</td>
+
                                 <td>
                                     <button class="btn btn-sm btn-info editBtn" data-id="${r.id}"><i class="fa fa-edit"></i></button>
                                     <button class="btn btn-sm btn-danger deleteBtn" data-id="${r.id}"><i class="fa fa-trash"></i></button>
@@ -168,8 +158,6 @@
                     $('#full_name').val(data.full_name);
                     $('#sym_ststus').val(data.sym_ststus);
                     $('#sort_order').val(data.sort_order);
-                    $('#date_added').val(formatDateForInput(data.date_added));
-                    $('#date_modify').val(formatDateForInput(data.date_modify));
                     $('#symmetryModal').modal('show');
                     $('#savesymmetryBtn').text('Update');
                 });

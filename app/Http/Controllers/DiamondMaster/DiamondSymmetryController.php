@@ -19,17 +19,8 @@ class DiamondSymmetryController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'name' => 'nullable|string|max:250',
-            'alias' => 'nullable|string|max:250',
-            'short_name' => 'nullable|string|max:150',
-            'full_name' => 'nullable|string|max:250',
-            'sym_ststus' => 'nullable|integer',
-            'sort_order' => 'nullable|integer',
-            'date_added' => 'nullable|date',
-            'date_modify' => 'nullable|date',
-        ]);
-    
+        $data = $request->validate($this->validationRules());
+        $data['date_added'] = now();
         DiamondSymmetry::create($data);
     
         return response()->json(['message' => 'Record added successfully.'], 200);
@@ -40,17 +31,8 @@ class DiamondSymmetryController extends Controller
     {
         $symmetry = DiamondSymmetry::findOrFail($id);
     
-        $data = $request->validate([
-            'name' => 'nullable|string|max:250',
-            'alias' => 'nullable|string|max:250',
-            'short_name' => 'nullable|string|max:150',
-            'full_name' => 'nullable|string|max:250',
-            'sym_ststus' => 'nullable|integer',
-            'sort_order' => 'nullable|integer',
-            'date_added' => 'nullable|date',
-            'date_modify' => 'nullable|date',
-        ]);
-    
+        $data = $request->validate($this->validationRules());
+        $data['date_modify'] = now();
         $symmetry->update($data);
     
         return response()->json(['message' => 'Record updated successfully.'], 200);
@@ -75,5 +57,16 @@ class DiamondSymmetryController extends Controller
             return response()->json($id);
         }
         return view('admin.DiamondMaster.symmetry.index', compact('id'));
+    }
+    private function validationRules()
+    {
+        return [
+            'name' => 'nullable|string|max:250',
+            'alias' => 'nullable|string|max:250',
+            'short_name' => 'nullable|string|max:150',
+            'full_name' => 'nullable|string|max:250',
+            'sym_ststus' => 'nullable|integer',
+            'sort_order' => 'nullable|integer',
+        ];
     }
 }
