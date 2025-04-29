@@ -47,7 +47,7 @@ class DiamondShadeController extends Controller
             'ds_display_in_front' => 'nullable|integer',
             'ds_sort_order' => 'nullable|integer',
         ]);
-        $data['date_modify'] = now();
+          $data['date_modify'] = now();
         $shade->update($data);
 
         return redirect()->route('shades.index')

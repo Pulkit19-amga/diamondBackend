@@ -29,20 +29,18 @@ class DiamondPolishMasterController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name'        => 'required|string|max:250',
-            'alias'       => 'nullable|string|max:250',
-            'short_name'  => 'nullable|string|max:150',
-            'full_name'   => 'nullable|string|max:250',
-            'pol_status'  => 'nullable|integer',
-            'sort_order'  => 'nullable|integer',
-            'date_added'  => 'nullable|date',
-            'date_modify' => 'nullable|date',
+            'name' => 'required|string|max:250',
+            'alias' => 'nullable|string|max:250',
+            'short_name' => 'nullable|string|max:150',
+            'full_name' => 'nullable|string|max:250',
+            'pol_status' => 'nullable|integer',
+            'sort_order' => 'nullable|integer',
         ]);
-
+        $data['date_added'] = now();
         DiamondPolish::create($data);
 
         return redirect()->route('diamondpolish.index')
-                         ->with('success', 'Polish added successfully.');
+            ->with('success', 'Polish added successfully.');
     }
 
     // Edit: for modal or direct view
@@ -63,26 +61,45 @@ class DiamondPolishMasterController extends Controller
         return view('admin.DiamondMaster.Polish.index', compact('polish'));
     }
 
-    // Update existing record
     public function update(Request $request, $id)
     {
         $polish = DiamondPolish::findOrFail($id);
 
-        $data = $request->validate([
-            'name'        => 'required|string|max:250',
-            'alias'       => 'nullable|string|max:250',
-            'short_name'  => 'nullable|string|max:150',
-            'full_name'   => 'nullable|string|max:250',
-            'pol_status'  => 'nullable|integer',
-            'sort_order'  => 'nullable|integer',
-            'date_added'  => 'nullable|date',
-            'date_modify' => 'nullable|date',
-        ]);
+        // If request is ONLY for status or sort_order (no full form fields)
+        if (
+            ($request->has('pol_status') || $request->has('sort_order')) &&
+            !$request->has('name') &&
+            !$request->has('alias') &&
+            !$request->has('short_name') &&
+            !$request->has('full_name')
+        ) {
+            $data = $request->validate([
+                'pol_status' => 'nullable|integer',
+                'sort_order' => 'nullable|integer',
+            ]);
+        } else {
+            // Full form update
+            $data = $request->validate([
+                'name' => 'required|string|max:250',
+                'alias' => 'nullable|string|max:250',
+                'short_name' => 'nullable|string|max:150',
+                'full_name' => 'nullable|string|max:250',
+                'pol_status' => 'nullable|integer',
+                'sort_order' => 'nullable|integer',
+            ]);
+        }
 
+        $data['date_modify'] = now();
         $polish->update($data);
 
+        // If AJAX, return JSON
+        if ($request->ajax()) {
+            return response()->json(['message' => 'Polish updated successfully.']);
+        }
+
+        // Otherwise, redirect
         return redirect()->route('diamondpolish.index')
-                         ->with('success', 'Polish updated successfully.');
+            ->with('success', 'Polish updated successfully.');
     }
 
     // Delete record
@@ -92,6 +109,6 @@ class DiamondPolishMasterController extends Controller
         $polish->delete();
 
         return redirect()->route('diamondpolish.index')
-                         ->with('success', 'Polish deleted successfully.');
+            ->with('success', 'Polish deleted successfully.');
     }
 }
