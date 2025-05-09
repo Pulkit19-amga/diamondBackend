@@ -29,6 +29,11 @@ class DiamondMaster extends Model
         return $this->belongsTo(DiamondColor::class, 'color');
     }
 
+    public function cut()
+    {
+        return $this->belongsTo(DiamondCut::class, 'cut');
+    }
+
     // Define the relationship with the Clarity model
     public function clarity()
     {
@@ -37,7 +42,17 @@ class DiamondMaster extends Model
 
     public function polish()
     {
-        return $this->belongsTo(DiamondClarityMaster::class, 'polish');
+        return $this->belongsTo(DiamondPolish::class, 'polish');
+    }
+
+    public function symmetry()
+    {
+        return $this->belongsTo(DiamondSymmetry::class, 'symmetry');
+    }
+
+    public function fluorescence()
+    {
+        return $this->belongsTo(DiamondFlourescence::class, 'fluorescence');
     }
 
     // DiamondMaster.php
