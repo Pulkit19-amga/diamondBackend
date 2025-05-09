@@ -26,10 +26,8 @@ class DiamondFancyColorController extends Controller
             'fco_remark' => 'nullable|string',
             'fco_display_in_front' => 'nullable|integer',
             'fco_sort_order' => 'nullable|integer',
-            'date_added' => 'nullable|date',
-            'date_modify' => 'nullable|date',
         ]);
-    
+        $data['date_added'] = now();
         DiamondFancyColor::create($data);
     
         return response()->json(['message' => 'Record added successfully.'], 200);
@@ -46,10 +44,9 @@ class DiamondFancyColorController extends Controller
             'fco_remark' => 'nullable|string',
             'fco_display_in_front' => 'nullable|integer',
             'fco_sort_order' => 'nullable|integer',
-            'date_added' => 'nullable|date',
-            'date_modify' => 'nullable|date',
+           
         ]);
-    
+        $data['date_modify'] = now();
         $fancyColor->update($data);
     
         return response()->json(['message' => 'Record updated successfully.'], 200);
@@ -59,7 +56,7 @@ class DiamondFancyColorController extends Controller
         $fancyColor = DiamondFancyColor::findOrFail($id);
         $fancyColor->delete();
         if (request()->ajax()) {
-            return response()->json(['message' => 'Record deleted successfully.'], 200);
+            return response()->json(['success' => true, 'message' => 'Record deleted successfully.']);
         }
 
         return redirect()->route('fancyColor.index')

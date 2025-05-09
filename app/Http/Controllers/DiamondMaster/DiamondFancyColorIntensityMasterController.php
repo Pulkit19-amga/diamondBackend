@@ -26,10 +26,8 @@ class DiamondFancyColorIntensityMasterController extends Controller
             'fci_remark' => 'nullable|string',
             'fci_display_in_front' => 'nullable|boolean',
             'fci_sort_order' => 'nullable|integer',
-            'date_added' => 'nullable|date',
-            'date_modify' => 'nullable|date'
         ]);
-
+        $validated['date_added'] = now();
         DiamondFancyColorIntensity::create($validated);
         return response()->json(['success' => true]);
     }
@@ -43,10 +41,8 @@ class DiamondFancyColorIntensityMasterController extends Controller
             'fci_remark' => 'nullable|string',
             'fci_display_in_front' => 'nullable|boolean',
             'fci_sort_order' => 'nullable|integer',
-            'date_added' => 'nullable|date',
-            'date_modify' => 'nullable|date'
         ]);
-
+        $validated['date_modify'] = now();
         $intensity = DiamondFancyColorIntensity::findOrFail($id);
         $intensity->update($validated);
         return response()->json(['success' => true]);
@@ -61,6 +57,10 @@ class DiamondFancyColorIntensityMasterController extends Controller
     public function destroy($id)
     {
         DiamondFancyColorIntensity::findOrFail($id)->delete();
-        return response()->json(['success' => true]);
+        if (request()->ajax()) {
+            return response()->json(['success' => true, 'message' => 'Record deleted successfully.']);
+        }
+        return redirect()->route('fancy-color-intensity.index')
+        ->with('success', 'Record deleted successfully.');
     }
 }

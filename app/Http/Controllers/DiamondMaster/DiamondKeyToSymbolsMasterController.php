@@ -78,6 +78,10 @@ class DiamondKeyToSymbolsMasterController extends Controller
     {
         $record = DiamondKeyToSymbols::findOrFail($id);
         $record->delete();
+        if (request()->ajax()) {
+            return response()->json(['success' => true, 'message' => 'Record deleted successfully.']);
+        }
+
 
         return redirect()->route('keytosymbols.index')
                          ->with('success', 'Record deleted successfully.');

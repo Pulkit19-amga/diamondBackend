@@ -69,6 +69,9 @@ class DiamondColorMasterController extends Controller
     {
         $color = DiamondColor::findOrFail($id);
         $color->delete();
+        if (request()->ajax()) {
+            return response()->json(['success' => true, 'message' => 'Record deleted successfully.']);
+        }
 
         return response()->json(['status' => 'Diamond Color deleted successfully']);
     }

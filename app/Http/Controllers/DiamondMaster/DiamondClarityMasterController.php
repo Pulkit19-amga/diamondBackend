@@ -24,10 +24,8 @@ class DiamondClarityMasterController extends Controller
             'remark'           => 'nullable|string',
             'display_in_front' => 'nullable|integer',
             'sort_order'       => 'nullable|integer',
-            'date_added'       => 'nullable|date',
-            'date_modify'      => 'nullable|date',
         ]);
-
+        $data['date_added'] = now();
         DiamondClarityMaster::create($data);
 
         return redirect()->route('clarity.index')
@@ -46,10 +44,8 @@ class DiamondClarityMasterController extends Controller
             'remark'           => 'nullable|string',
             'display_in_front' => 'nullable|integer',
             'sort_order'       => 'nullable|integer',
-            'date_added'       => 'nullable|date',
-            'date_modify'      => 'nullable|date',
         ]);
-
+        $data['date_modify'] = now();
         $clarity->update($data);
 
         return redirect()->route('clarity.index')
@@ -61,6 +57,9 @@ class DiamondClarityMasterController extends Controller
     {
         $clarity = DiamondClarityMaster::findOrFail($id);
         $clarity->delete();
+        if (request()->ajax()) {
+            return response()->json(['success' => true, 'message' => 'Record deleted successfully.']);
+        }
 
         return redirect()->route('clarity.index')
                          ->with('success', 'Record deleted successfully.');

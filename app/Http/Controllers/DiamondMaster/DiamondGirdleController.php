@@ -26,10 +26,8 @@ class DiamondGirdleController extends Controller
             'dg_remark' => 'nullable|string',
             'dg_display_in_front' => 'nullable|integer',
             'dg_sort_order' => 'nullable|integer',
-            'date_added' => 'nullable|date',
-            'date_modify' => 'nullable|date',
         ]);
-    
+        $data['date_added'] = now();
         DiamondGirdle::create($data);
     
         return response()->json(['message' => 'Record added successfully.'], 200);
@@ -46,10 +44,8 @@ class DiamondGirdleController extends Controller
             'dg_remark' => 'nullable|string',
             'dg_display_in_front' => 'nullable|integer',
             'dg_sort_order' => 'nullable|integer',
-            'date_added' => 'nullable|date',
-            'date_modify' => 'nullable|date',
         ]);
-    
+        $data['date_modify'] = now();
         $girdle->update($data);
     
         return response()->json(['message' => 'Record updated successfully.'], 200);
@@ -58,9 +54,13 @@ class DiamondGirdleController extends Controller
     {
         $girdle = DiamondGirdle::findOrFail($id);
         $girdle->delete();
+        // if (request()->ajax()) {
+        //     return response()->json(['message' => 'Record deleted successfully.'], 200);
+        // }
         if (request()->ajax()) {
-            return response()->json(['message' => 'Record deleted successfully.'], 200);
+            return response()->json(['success' => true, 'message' => 'Record deleted successfully.']);
         }
+
 
         return redirect()->route('girdle.index')
         ->with('success', 'Record deleted successfully.');

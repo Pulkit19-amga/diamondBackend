@@ -88,6 +88,10 @@ class DiamondLabMasterController extends Controller
     {
         $lab = DiamondLab::findOrFail($id);
         $lab->delete();
+        if (request()->ajax()) {
+            return response()->json(['success' => true, 'message' => 'Record deleted successfully.']);
+        }
+
         return redirect()->route('diamondlab.index')
             ->with('success', 'Record deleted successfully.');
     }

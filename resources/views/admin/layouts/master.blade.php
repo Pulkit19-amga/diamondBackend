@@ -11,9 +11,75 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="" />
     <style>
-        /* .dashboard .menu-vertical .menu-item.open:not(.menu-item-closing) > .menu-link:after{
-        visibility: hidden !important;
-      } */
+        .popup-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 999;
+        }
+
+        .popup-outer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        .popup-inner {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            max-width: 370px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .popup-card {
+            width: 100%;
+        }
+
+        .remove-trash-icon {
+            margin-bottom: 15px;
+        }
+
+        .removeflx-btn {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .popup-modal.remove-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 9999;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            /* overlay background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup-modal .popup-outer {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup-modal .popup-card {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            width: 400px;
+            max-width: 90%;
+        }
     </style>
 
     <!-- Favicon -->
@@ -97,6 +163,37 @@
             </div>
             <!-- / Layout page -->
         </div>
+        <!-- Global Delete Confirmation Modal -->
+        <div class="popup-modal remove-modal" style="display: none;">
+            <div class="popup-outer">
+                <div class="popup-inner">
+                    <div class="popup-card">
+                        <div class="remove-popup-inner">
+                            <div class="popbtm-dtl">
+                                <div class="remove-trash-icon">
+                                    <em>
+                                        <em>
+                                            <!-- Font Awesome Trash Icon in Blue -->
+                                            <i class="fa fa-trash" style="color: #696cff; font-size: 30px;"></i>
+                                        </em>
+                                    </em>
+                                </div>
+                                <div class="remove-record-descrp">
+                                    <h3>Delete it!</h3>
+                                    <p>Are you sure you want to delete this record?</p>
+                                </div>
+                                <div class="removeflx-btn">
+                                    <button type="button" class="btn btn-secondary btn-sm close-pop">No</button>
+                                    <button type="button" class="btn btn-primary btn-sm"
+                                        id="confirmDelete">Yes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="overlay close-pop"></div>
+        </div>
 
         <!-- Overlay -->
         <div class="layout-overlay layout-menu-toggle"></div>
@@ -112,6 +209,43 @@
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
+        });
+
+        // Global Delete Handler with Custom Modal
+        let deleteUrl = '';
+        let $targetRow = null;
+
+        $(document).on('click', '.deleteBtn', function() {
+            const id = $(this).data('id');
+            deleteUrl = `{{ url('admin/shades') }}/${id}`;
+            $targetRow = $(this).closest('tr');
+            $('#deleteModalNew .modal-body').text('Are you sure you want to delete this record?');
+            $('#deleteModalNew').modal('show');
+        });
+
+        $('#confirmDeleteBtn').on('click', function() {
+            if (!deleteUrl) return;
+
+            $.ajax({
+                url: deleteUrl,
+                type: 'POST',
+                data: {
+                    _method: 'DELETE',
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                        $targetRow.remove();
+                        $('#deleteModalNew').modal('hide');
+                    } else {
+                        toastr.error('Unexpected server response.');
+                    }
+                },
+                error: function() {
+                    toastr.error('Failed to delete the record.');
+                }
+            });
         });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>

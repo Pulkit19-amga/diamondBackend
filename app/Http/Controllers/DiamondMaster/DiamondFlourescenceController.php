@@ -27,9 +27,8 @@ class DiamondFlourescenceController extends Controller
             'full_name' => 'nullable|string|max:250',
             'fluo_status' => 'nullable|integer',
             'sort_order' => 'nullable|integer',
-            'date_added' => 'nullable|date',
-            'date_modify' => 'nullable|date',
         ]);
+        $data['date_added'] = now();
     
         DiamondFlourescence::create($data);
     
@@ -48,10 +47,8 @@ class DiamondFlourescenceController extends Controller
             'full_name' => 'nullable|string|max:250',
             'fluo_status' => 'nullable|integer',
             'sort_order' => 'nullable|integer',
-            'date_added' => 'nullable|date',
-            'date_modify' => 'nullable|date',
         ]);
-    
+        $data['date_modify'] = now();
         $flourescence->update($data);
     
         return response()->json(['message' => 'Record updated successfully.'], 200);
@@ -63,7 +60,7 @@ class DiamondFlourescenceController extends Controller
         $flourescence = DiamondFlourescence::findOrFail($id);
         $flourescence->delete();
         if (request()->ajax()) {
-            return response()->json(['message' => 'Record deleted successfully.'], 200);
+            return response()->json(['success' => true, 'message' => 'Record deleted successfully.']);
         }
 
         return redirect()->route('flourescence.index')

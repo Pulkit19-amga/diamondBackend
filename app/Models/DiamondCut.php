@@ -11,8 +11,8 @@ class DiamondCut extends Model
     use HasFactory;
 
     protected $table = 'diamond_cut_master';
-    protected $primaryKey='id';
-    public $timestamps=false;
+    protected $primaryKey = 'id';
+    public $timestamps = false;
     protected $fillable = [
         'name',
         'shortname',
@@ -28,8 +28,8 @@ class DiamondCut extends Model
     public function diamondMasters()
     {
         return $this->hasMany(DiamondMaster::class);
-    } 
+    }
 
 
-    
+
 }

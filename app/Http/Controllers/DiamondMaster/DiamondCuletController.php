@@ -26,10 +26,8 @@ class DiamondCuletController extends Controller
             'dc_remark' => 'nullable|string',
             'dc_display_in_front' => 'nullable|integer',
             'dc_sort_order' => 'nullable|integer',
-            'date_added' => 'nullable|date',
-            'date_modify' => 'nullable|date',
         ]);
-    
+        $data['date_added'] = now();
         DiamondCulet::create($data);
     
         return response()->json(['message' => 'Record added successfully.'], 200);
@@ -46,10 +44,8 @@ class DiamondCuletController extends Controller
             'dc_remark' => 'nullable|string',
             'dc_display_in_front' => 'nullable|integer',
             'dc_sort_order' => 'nullable|integer',
-            'date_added' => 'nullable|date',
-            'date_modify' => 'nullable|date',
         ]);
-    
+        $data['date_modify'] = now();
         $culet->update($data);
     
         return response()->json(['message' => 'Record updated successfully.'], 200);
@@ -59,7 +55,7 @@ class DiamondCuletController extends Controller
         $culet = DiamondCulet::findOrFail($id);
         $culet->delete();
         if (request()->ajax()) {
-            return response()->json(['message' => 'Record deleted successfully.'], 200);
+            return response()->json(['success' => true, 'message' => 'Record deleted successfully.']);
         }
 
         return redirect()->route('culet.index')

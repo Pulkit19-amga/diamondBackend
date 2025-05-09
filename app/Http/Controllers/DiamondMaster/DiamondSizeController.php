@@ -67,9 +67,8 @@ class DiamondSizeController extends Controller
         $size = DiamondSize::findOrFail($id);
         $size->delete();
         if (request()->ajax()) {
-            return response()->json(['message' => 'Record deleted successfully.'], 200);
+            return response()->json(['success' => true, 'message' => 'Record deleted successfully.']);
         }
-
         return redirect()->route('sizes.index')
         ->with('success', 'Record deleted successfully.');
     }

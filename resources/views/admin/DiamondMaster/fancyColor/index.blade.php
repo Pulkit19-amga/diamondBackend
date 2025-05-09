@@ -80,17 +80,6 @@
                             <label>Sort Order</label>
                             <input type="number" class="form-control" id="fco_sort_order" name="fco_sort_order">
                         </div>
-
-                        <div class="col-6">
-                            <label>Date Added</label>
-                            <input type="datetime-local" class="form-control" id="date_added" name="date_added">
-                        </div>
-
-                        <div class="col-6">
-                            <label>Date Modified</label>
-                            <input type="datetime-local" class="form-control" id="date_modify" name="date_modify">
-                        </div>
-
                         <div id="formError" class="text-danger mt-2"></div>
                     </div>
 
@@ -137,8 +126,8 @@
                      <input type="number" value="${r.fco_sort_order}" class="sort-order" data-id="${r.fco_id}" style="width: 60px;">
                     </td>
 
-                                <td>${r.date_added ? r.date_added.substring(0, 10) : ''}</td>
-                                <td>${r.date_modify ? r.date_modify.substring(0, 10) : ''}</td>
+                                <td>${r.date_added ? r.date_added: ''}</td>
+                                <td>${r.date_modify ? r.date_modify: ''}</td>
                                 <td>
                                     <button class="btn btn-sm btn-info editBtn" data-id="${r.fco_id}"><i class="fa fa-edit"></i></button>
                                     <button class="btn btn-sm btn-danger deleteBtn" data-id="${r.fco_id}"><i class="fa fa-trash"></i></button>
@@ -169,33 +158,57 @@
                     $('#fco_remark').val(data.fco_remark);
                     $('#fco_display_in_front').val(data.fco_display_in_front);
                     $('#fco_sort_order').val(data.fco_sort_order);
-                    $('#date_added').val(formatDateForInput(data.date_added));
-                    $('#date_modify').val(formatDateForInput(data.date_modify));
                     $('#fancyColorModal').modal('show');
                     $('#savefancyColorBtn').text('Update');
                 });
             });
 
-            $(document).on('click', '.deleteBtn', function() {
-                const id = $(this).data('id');
-                const row = $(this).closest('tr');
-                if (confirm("Are you sure you want to delete this record?")) {
+            $(document).ready(function() {
+                let deleteId = null;
+                let $currentRow = null;
+
+                $(document).on('click', '.deleteBtn', function() {
+
+                    deleteId = $(this).data('id');
+                    $currentRow = $(this).closest('tr');
+                    $('.popup-modal.remove-modal').fadeIn(); // Show the modal
+                });
+
+                // Close modal on No or overlay click
+                $(document).on('click', '.close-pop', function() {
+                    $('.popup-modal.remove-modal').fadeOut(); // Hide the modal
+                });
+
+                // Confirm delete
+                $('#confirmDelete').on('click', function() {
+                    if (!deleteId) return;
+
                     $.ajax({
-                        url: `/admin/fancyColor/${id}`,
-                        type: 'DELETE',
+                        url: `/admin/fancyColor/${deleteId}`,
+                        type: 'POST',
                         data: {
-                            _token: '{{ csrf_token() }}'
+                            _token: '{{ csrf_token() }}',
+                            _method: 'DELETE'
                         },
-                        success: function() {
-                            row.remove();
-                            toastr.success("Record deleted successfully!");
-                            fetchRecords();
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.success) {
+                                $currentRow.remove();
+                                toastr.success(response.message);
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 1000);
+                            } else {
+                                toastr.error("Unexpected server response.");
+                            }
+                            $('.popup-modal.remove-modal').fadeOut(); // Close the modal
                         },
-                        error: function() {
+                        error: function(xhr) {
                             toastr.error("Failed to delete the record.");
+                            $('.popup-modal.remove-modal').fadeOut(); // Close the modal
                         }
                     });
-                }
+                });
             });
 
             $('#fancyColorForm').submit(function(e) {

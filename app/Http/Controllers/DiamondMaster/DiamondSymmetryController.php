@@ -44,8 +44,9 @@ class DiamondSymmetryController extends Controller
         $symmetry = DiamondSymmetry::findOrFail($id);
         $symmetry->delete();
         if (request()->ajax()) {
-            return response()->json(['message' => 'Record deleted successfully.'], 200);
+            return response()->json(['success' => true, 'message' => 'Record deleted successfully.']);
         }
+
 
         return redirect()->route('symmetry.index')
         ->with('success', 'Record deleted successfully.');

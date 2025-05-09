@@ -64,6 +64,7 @@ class DiamondMasterController extends Controller
     {
         $diamond = DiamondMaster::findOrFail($id);
         $diamond->delete();
+        
         return response()->json(['success' => true]);
     }
 
