@@ -39,8 +39,11 @@ class DiamondMaster extends Model
     {
         return $this->belongsTo(DiamondClarityMaster::class, 'polish');
     }
+    public function cut()
+    {
+        return $this->belongsTo(DiamondCut::class, 'cut');
+    }
 
-    // DiamondMaster.php
 
     public function certificateCompany()
     {

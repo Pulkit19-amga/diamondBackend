@@ -23,4 +23,8 @@ class DiamondCut extends Model
         'date_added',
         'date_modify',
     ];
+    public function diamondMasters()
+    {
+        return $this->hasMany(DiamondMaster::class);
+    } 
 }

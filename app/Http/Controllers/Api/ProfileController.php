@@ -28,11 +28,11 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
 
+        // Validate only the fields that are provided in the request
         $validator = Validator::make($request->all(), [
             'name' => 'sometimes|string|max:255',
-            'email' => 'sometimes|email|unique:users,email,' . $user->id,
-            'phone' => 'sometimes|string|max:20',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Optional image
+            'phone' => 'sometimes|string|max:20', 
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', 
         ]);
 
         if ($validator->fails()) {
@@ -43,15 +43,19 @@ class ProfileController extends Controller
             ], 422);
         }
 
-        // 🔄 Update fields if provided
-        if ($request->has('name')) $user->name = $request->name;
-        if ($request->has('email')) $user->email = $request->email;
-        if ($request->has('phone')) $user->phone = $request->phone;
+        // Update only the fields that are present in the request
+        if ($request->has('name')) {
+            $user->name = $request->name;
+        }
 
-        // 📷 Handle image upload
+        if ($request->has('phone')) {
+            $user->phone = $request->phone;
+        }
+
+        // Handle image upload (optional)
         if ($request->hasFile('image')) {
-            if ($user->image && Storage::exists($user->image)) {
-                Storage::delete($user->image); // Delete old image
+            if ($user->image && \Storage::exists($user->image)) {
+                \Storage::delete($user->image); // Delete old image if exists
             }
 
             $path = $request->file('image')->store('public/profile_images');
@@ -66,4 +70,5 @@ class ProfileController extends Controller
             'data' => $user,
         ]);
     }
+
 }
