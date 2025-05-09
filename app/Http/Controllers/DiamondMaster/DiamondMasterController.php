@@ -32,7 +32,7 @@ class DiamondMasterController extends Controller
 
     public function data(Request $request)
     {
-        $diamonds = DiamondMaster::with(['vendor', 'shape', 'color', 'clarity', 'certificateCompany'])->get();
+        $diamonds = DiamondMaster::with(['vendor', 'shape', 'color', 'cut', 'clarity', 'certificateCompany', 'polish', 'symmetry', 'fluorescence'])->get();
         return response()->json($diamonds);
     }
 
