@@ -12,6 +12,9 @@ use App\Http\Controllers\api\PolishController;
 use App\Http\Controllers\api\ClarityController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\RegisterController;
+use App\Http\Controllers\Api\ContactController;
+use App\Http\Controllers\DiamondMaster\DiamondMasterController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -28,7 +31,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
+// get all diamonds data
+Route::get('/get-all-diamonds', [DiamondMasterController::class, 'data']);
+Route::post('/contact', [ContactController::class, 'submit']);
 
+// ->middleware('throttle:10,1')
 
 Route::get('/diamond-shapes', [ShapeController::class, 'getFrontShapes']);
 Route::get('diamonds/by-shape/{shape_id}', [ShapeController::class, 'filterDiamondsByShape']);
