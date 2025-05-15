@@ -33,7 +33,6 @@ class DiamondMasterController extends Controller
 
     public function data(Request $request)
     {
-        return response()->json($request->all(), 200, $headers);
        
         $query = DiamondMaster::with([
             'vendor', 'shape', 'color', 'cut', 'clarity',
