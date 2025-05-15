@@ -47,8 +47,6 @@ class DiamondMasterController extends Controller
         if ($request->filled('price')) {
             $price = $request->get('price'); // expects [min, max]
             $query->whereBetween('price', $price);
-
-           
         }
 
         if ($request->has('carat') && is_array($request->carat) && count($request->carat) === 2) {
@@ -78,6 +76,88 @@ class DiamondMasterController extends Controller
             $query->where('certificate_number', 'like', '%' . $request->get('certificate') . '%');
         }
 
+        if (
+            $request->has('polish') &&
+            is_array($request->polish) &&
+            count($request->polish) === 2 &&
+            is_numeric($request->polish[0]) &&
+            is_numeric($request->polish[1])
+        ) {
+            $start = (int) $request->polish[0];
+            $end = (int) $request->polish[1];
+
+            // Reduce last value by 1 but don't go below the start value
+            $end = max($end - 1, $start);
+
+            $query->whereBetween('polish', [$start, $end]);
+        }
+
+        if (
+            $request->has('symmetry') &&
+            is_array($request->symmetry) &&
+            count($request->symmetry) === 2 &&
+            is_numeric($request->symmetry[0]) &&
+            is_numeric($request->symmetry[1])
+        ) {
+            $start = (int) $request->symmetry[0];
+            $end = (int) $request->symmetry[1];
+
+            // Reduce last value by 1 but don't go below the start value
+            $end = max($end - 1, $start);
+
+            $query->whereBetween('symmetry', [$start, $end]);
+        }
+        
+        if ($request->has('fluorescence') && is_array($request->fluorescence)) {
+            $fluorescence = $request->fluorescence;
+            // Reduce the last value by 1 dynamically
+            $fluorescence[1] = max($fluorescence[1] - 1, $fluorescence[0]); 
+            // Ensure the last value doesn't go below the first value
+            $query->whereBetween('fluorescence', $fluorescence);
+        }
+
+        if (
+            $request->has('ratio') &&
+            is_array($request->ratio) &&
+            count($request->ratio) === 2 &&
+            is_numeric($request->ratio[0]) &&
+            is_numeric($request->ratio[1])
+        ) {
+            $start = (float) $request->ratio[0];
+            $end = (float) $request->ratio[1];
+
+            $query->whereNotNull('measurement_l')
+                ->whereNotNull('measurement_w')
+                ->where('measurement_w', '>', 0)
+                ->whereRaw('(measurement_l / measurement_w) BETWEEN ? AND ?', [$start, $end]);
+        }
+
+        if (
+            $request->has('table') &&
+            is_array($request->table) &&
+            count($request->table) === 2 &&
+            is_numeric($request->table[0]) &&
+            is_numeric($request->table[1])
+        ) {
+            $start = (int) $request->table[0];
+            $end = (int) $request->table[1];
+
+            $query->whereBetween('table_diamond', [$start, $end]);
+        }
+
+        if (
+            $request->has('depth') &&
+            is_array($request->depth) &&
+            count($request->depth) === 2 &&
+            is_numeric($request->depth[0]) &&
+            is_numeric($request->depth[1])
+        ) {
+            $start = (int) $request->depth[0];
+            $end = (int) $request->depth[1];
+
+            $query->whereBetween('depth', [$start, $end]);
+        }
+
         // Add similar checks for polish, symmetry, fluorescence, ratio, table, depth, featured, etc.
 
         // Sorting
@@ -89,6 +169,17 @@ class DiamondMasterController extends Controller
         // }
         if ($request->boolean('featured')) {
             $query->where('is_superdeal', 1);
+        }
+
+        if ($request->boolean('showOnlyChecked')) {
+            $checked = $request->checkedDiamonds ?? [];
+
+            if (is_array($checked) && count($checked) > 0) {
+                $query->whereIn('diamondid', $checked);
+            } else {
+                // If showOnlyChecked is true but no IDs, return no results
+                $query->whereRaw('0 = 1'); // always false condition
+            }
         }
 
         $perPage = $request->get('per_page', 20);
