@@ -49,11 +49,11 @@ Route::get('diamonds/by-clarity/{clarity_id}', [ClarityController::class, 'filte
 
 Route::get('diamonds/by-polish/{polish_id}', [PolishController::class, 'filterDiamondsByPolish']);
 
-Route::post('/register', [RegisterController::class, 'register']);
+Route::post('/register', [AuthController::class, 'register']);
 
-Route::get('/login', [LoginController::class, 'login'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login');
 
-Route::middleware('auth:sanctum')->get('/logout', [LogoutController::class, 'logout']);
+Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
 Route::post('/forgot-password', [AuthController::class, 'sendResetLink']);
 Route::get('/reset-password', [AuthController::class, 'showResetForm'])->name('password.reset');
