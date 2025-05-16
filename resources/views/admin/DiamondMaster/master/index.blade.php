@@ -24,7 +24,8 @@
                             <th>Clarity</th>
                             <th>Carat</th>
                             <th>Price/Carat</th>
-                            <th>date added</th>
+                            <th>Date added</th>
+                            <th>Date Updated</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -43,12 +44,12 @@
                     url: '{{ route('diamond-master.data') }}',
                     type: 'GET'
                 },
-                 responsive: {
-            details: {
-                type: 'inline' 
-            }
-        },
-        scrollX: false,
+                responsive: {
+                    details: {
+                        type: 'inline'
+                    }
+                },
+                scrollX: false,
                 columns: [{
                         data: 'diamondid'
                     },
@@ -78,7 +79,10 @@
                         data: 'date_added'
                     },
                     {
-                        
+                        data: 'date_updated'
+                    },
+                    {
+
                         data: 'diamondid',
                         orderable: false,
                         searchable: false,
@@ -94,18 +98,38 @@
 
 
             // Delete handler
-            $(document).on('click', '.deleteBtn', function() {
-                if (!confirm('Are you sure you want to delete?')) return;
+            $(document).ready(function() {
+                let deleteId = null;
 
-                let id = $(this).data('id');
+                // Show modal when delete button is clicked
+                $(document).on('click', '.deleteBtn', function() {
+                    deleteId = $(this).data('id');
+                    $('.popup-modal.remove-modal').fadeIn(); // Show custom popup
+                });
 
-                $.post(`/admin/diamond-master/${id}`, {
-                    _method: 'DELETE',
-                    _token: '{{ csrf_token() }}'
-                }).done(() => {
-                     $('#diamondTable').DataTable().ajax.reload(); // Reload data after deletion
+                // Cancel/Delete modal close
+                $(document).on('click', '.close-pop', function() {
+                    $('.popup-modal.remove-modal').fadeOut();
+                });
+
+                // Confirm delete from modal
+                $('#confirmDelete').on('click', function() {
+                    if (!deleteId) return;
+
+                    $.post(`/admin/diamond-master/${deleteId}`, {
+                        _method: 'DELETE',
+                        _token: '{{ csrf_token() }}'
+                    }).done(() => {
+                        $('#diamondTable').DataTable().ajax.reload(); // Refresh table
+                        toastr.success('Record deleted successfully!');
+                    }).fail(() => {
+                        toastr.error('Failed to delete the record.');
+                    }).always(() => {
+                        $('.popup-modal.remove-modal').fadeOut(); // Close modal always
+                    });
                 });
             });
+
         });
     </script>
 @endsection
