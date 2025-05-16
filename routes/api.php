@@ -12,7 +12,9 @@ use App\Http\Controllers\api\PolishController;
 use App\Http\Controllers\api\ClarityController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\RegisterController;
+use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\DiamondMaster\DiamondMasterController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -28,8 +30,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// get all diamonds data
 Route::get('/get-all-diamonds', [DiamondMasterController::class, 'data']);
-//shape
+Route::post('/contact', [ContactController::class, 'submit']);
+
+// ->middleware('throttle:10,1')
+
 Route::get('/diamond-shapes', [ShapeController::class, 'getFrontShapes']);
 Route::get('diamonds/by-shape/{shape_id}', [ShapeController::class, 'filterDiamondsByShape']);
 //color
@@ -42,11 +48,11 @@ Route::get('diamonds/by-clarity/{clarity_id}', [ClarityController::class, 'filte
 
 Route::get('diamonds/by-polish/{polish_id}', [PolishController::class, 'filterDiamondsByPolish']);
 
-Route::post('/register', [RegisterController::class, 'register']);
+Route::post('/register', [AuthController::class, 'register']);
 
-Route::get('/login', [LoginController::class, 'login'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login');
 
-Route::middleware('auth:sanctum')->get('/logout', [LogoutController::class, 'logout']);
+Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
 Route::post('/password/email', [AuthController::class, 'sendResetLink']);
 Route::get('password/reset/{token}', [AuthController::class, 'showResetForm'])->name('password.reset');

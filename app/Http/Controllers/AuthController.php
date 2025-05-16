@@ -1,7 +1,7 @@
 <?php
-
+ 
 namespace App\Http\Controllers;
-
+ 
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -9,54 +9,57 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Validator;
 
+
 class AuthController extends Controller
 {
     public function register(Request $request)
     {
         $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:6',
+            'name'      => 'required|string|max:255',
+            'email'     => 'required|email|unique:users,email',
+            'password'  => 'required|min:6|confirmed',
             'user_type' => 'required|in:user,admin,vendor',
         ]);
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
+            'name'      => $request->name,
+            'email'     => $request->email,
+            'password'  => bcrypt($request->password),
             'user_type' => $request->user_type,
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
+            'success'      => true,
+            'message'      => 'Registration successful.',
             'access_token' => $token,
-            'token_type' => 'Bearer',
-            'user_type' => $user->user_type,
-        ]);
+            'token_type'   => 'Bearer',
+            'user_type'    => $user->user_type,
+        ], 201);
     }
-
 
     public function login(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
+            'email'    => 'required|email',
             'password' => 'required',
         ]);
-
+ 
         $user = User::where('email', $request->email)->first();
-
         if (!$user || !Hash::check($request->password, $user->password)) {
+
             throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
+                'email' => ['Incorrect credentials'],
             ]);
         }
-
+ 
         $token = $user->createToken('auth_token')->plainTextToken;
-
         return response()->json([
-            'user' => $user,
-            'token' => $token
+            'success' => true,
+            'message' => 'Login successful.',
+            'user'    => $user,
+            'token'   => $token,
         ]);
     }
     public function resetPassword(Request $request)
@@ -147,13 +150,15 @@ class AuthController extends Controller
 
         return response()->json(['message' => trans($status)], 500);
     }
+
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
-
         return response()->json([
-            'message' => 'Logged out successfully'
+            'success' => true,
+            'message' => 'Logout successful.',
         ]);
     }
+ 
+    
 }
-

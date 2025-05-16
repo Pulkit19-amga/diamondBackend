@@ -9,7 +9,6 @@ use App\Models\DiamondShape;
 use App\Models\DiamondColor;
 use App\Models\DiamondClarityMaster;
 use Illuminate\Http\Request;
-use Yajra\DataTables\Facades\DataTables;
 
 class DiamondMasterController extends Controller
 {
@@ -22,65 +21,6 @@ class DiamondMasterController extends Controller
             'colors'     => DiamondColor::pluck('name','id'),
             'clarities'  => DiamondClarityMaster::pluck('name','id'),
         ]);
-    }
-       public function dataBackend(Request $request)
-    {
-        $query = DiamondMaster::with([
-            'vendor', 'shape', 'color', 'cut', 'clarity',
-            'certificateCompany', 'polish', 'symmetry', 'fluorescence'
-        ]);
-
-        if ($request->filled('price')) {
-            $price = $request->get('price'); // expects [min, max]
-            $query->whereBetween('price', $price);
-        }
-
-        if ($request->has('carat') && is_array($request->carat) && count($request->carat) === 2) {
-            $carat = array_map('floatval', $request->carat); // expects [min, max]
-            $query->whereBetween('carat_weight', $carat);
-        }
-
-        if ($request->has('cut') && is_array($request->cut) && count($request->cut) === 2) {
-            $cut = array_map('intval', $request->cut);
-            $query->whereBetween('cut', $cut);
-        }
-
-        if ($request->has('color') && is_array($request->color)) {
-            $query->whereBetween('color', array_map('intval', $request->color));
-        }
-
-        if ($request->has('clarity') && is_array($request->clarity) && count($request->clarity) === 2) {
-            $clarity = array_map('intval', $request->clarity);
-            $query->whereBetween('clarity', $clarity);
-        }
-
-        if ($request->filled('shapes')) {
-            $query->whereIn('shape', $request->get('shapes'));
-        }
-
-        if ($request->filled('certificate')) {
-            $query->where('certificate_number', 'like', '%' . $request->get('certificate') . '%');
-        }
-
-        // Add similar checks for polish, symmetry, fluorescence, ratio, table, depth, featured, etc.
-
-        // Sorting
-        // if ($request->filled('sort')) {
-        //     $sort = explode(':', $request->get('sort'));
-        //     $column = $sort[0];
-        //     $direction = $sort[1] ?? 'asc';
-        //     $query->orderBy($column, $direction);
-        // }
-
-        $perPage = $request->get('per_page', 20);
-        $diamonds = $query->paginate($perPage);
-
-        // return response()->json($diamonds);
-         return DataTables::of($query)->make(true);
-        // return response()->json([
-        //     'request_data' => $request->all(),
-        //     'diamonds' => $query->paginate($perPage),
-        // ]);
     }
 
     public function data(Request $request)
@@ -136,6 +76,10 @@ class DiamondMasterController extends Controller
         $diamonds = $query->paginate($perPage);
 
         return response()->json($diamonds);
+        // return response()->json([
+        //     'request_data' => $request->all(),
+        //     'diamonds' => $query->paginate($perPage),
+        // ]);
     }
 
     public function create()
