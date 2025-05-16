@@ -47,32 +47,31 @@ class ImportDiamondData extends Command
                 DiamondMaster::updateOrCreate(
                     ['certificate_number' => $item['certificate']],
                     [
-                        'table_diamond' => $item['tables'] ?? null,
-                        'depth' => $item['depth'] ?? null,
-                        'measurement_l' => $item['length'] ?? null,
-                        'measurement_w' => $item['width'] ?? null,
-                        'measurement_h' => $item['height'] ?? null,
-                        'measurements' => $item['measurements'] ?? null,
-                        'certificate_number' => $item['certificate'] ?? null,
-                        'cert_link' => $item['certificateurl'] ?? null,
-                        'image_link' => $item['image'] ?? null,
-                        'video_link' => $item['video'] ?? null,
-                        'msrp_price' => $item['rap_price'] ?? null,
-
-                        'shape' => $this->getId('DiamondShape', $item['shape']) ?? 0,
+                        'diamond_type' => 'Standard', // or other derived type
+                        'quantity' => 1,  // Set to 1 as default
+                        'vendor_id' => $this->getVendorId($item['vendor_name']),
+                        'vendor_stock_number' => $item['stock_id'],
+                        'stock_number' => $item['sku'],
+                        'shape' => $this->getId('DiamondShape', $item['shape']),
                         'carat_weight' => $item['weight']['$numberDecimal'] ?? null,
-                        'color' => $this->getId('DiamondColor', $item['color']) ?? 0,
-                        'clarity' => $this->getId('DiamondClarityMaster', $item['clarity']) ?? 0,
-                        'cut' => $this->getId('DiamondCut', $item['cut']) ?? 0,
-                        'polish' => $this->getId('DiamondPolish', $item['polish']) ?? 0,
-                        'symmetry' => $this->getId('DiamondSymmetry', $item['symmetry']) ?? 0,
-                        'fluorescence' => $this->getId('DiamondFlourescence', $item['flour']) ?? 0,
-
+                        'color' => $this->getId('DiamondColor', $item['color']),
+                        'clarity' => $this->getId('DiamondClarityMaster', $item['clarity']),
+                        'cut' => $this->getId('DiamondCut', $item['cut']),
+                        'polish' => $this->getId('DiamondPolish', $item['polish']),
+                        'symmetry' => $this->getId('DiamondSymmetry', $item['symmetry']),
+                        'fluorescence' => $this->getId('DiamondFlourescence', $item['flour']),
                         'price' => $item['cash_price'] ?? null,
-                        'locationid' => $item['Location'] ?? null,
-                        'stock_number' => $item['sku'] ?? null,
+                        'msrp_price' => $item['rap_price'] ?? null,
                         'price_per_carat' => $item['price_per_cts'] ?? null,
-                        'cost_discount' => $item['cost_discount'] ?? null,
+                        'image_link' => $item['image'] ?? null,
+                        'cert_link' => $item['certificateurl'] ?? null,
+                        'video_link' => $item['video'] ?? null,
+                        'certificate_number' => $item['certificate'] ?? null,
+                        'measurements' => $item['measurements'] ?? null,
+                        'depth' => $item['depth'] ?? null,
+                        'table_diamond' => $item['tables'] ?? null,
+                        'date_added' => now(), // Current timestamp
+                        // Add more fields as needed
                     ]
                 );
             }
@@ -83,6 +82,11 @@ class ImportDiamondData extends Command
         } while ($page <= $lastPage);
 
         $this->info('All pages imported successfully.');
+    }
+
+    public function sanitizeFloat($value)
+    {
+        return $value ? (float) $value : null;
     }
 
     private function getId(string $modelName, $name, string $pkColumn = 'id')
@@ -99,4 +103,9 @@ class ImportDiamondData extends Command
         return $modelClass::where('name', $name)->value($pkColumn);
     }
 
+    private function getVendorId($vendorName)
+    {
+        // Implement logic to fetch or create the vendor if needed.
+        return 0; // Example: replace with actual logic
+    }
 }

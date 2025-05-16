@@ -34,24 +34,49 @@ class DiamondCutController extends Controller
         return response()->json(['message' => 'Record added successfully.'], 200);
     }
 
-    public function update(Request $request, $id)
-    {
-        $cut = DiamondCut::findOrFail($id);
+  public function update(Request $request, $id)
+{
+    $cut = DiamondCut::findOrFail($id);
 
-        $data = $request->validate([
-            'name' => 'nullable|string|max:250',
-            'shortname' => 'nullable|string|max:250',
-            'full_name' => 'nullable|string|max:250',
-            'ALIAS' => 'nullable|string',
-            'remark' => 'nullable|string',
-            'display_in_front' => 'nullable|integer',
-            'sort_order' => 'nullable|integer',
-        ]);
-        $data['date_modify'] = now();
-        $cut->update($data);
+    $rules = [];
 
-        return response()->json(['message' => 'Record updated successfully.'], 200);
+    if ($request->has('name')) {
+        $rules['name'] = 'required|string|max:250';
     }
+
+    if ($request->has('shortname')) {
+        $rules['shortname'] = 'nullable|string|max:250';
+    }
+
+    if ($request->has('full_name')) {
+        $rules['full_name'] = 'nullable|string|max:250';
+    }
+
+    if ($request->has('ALIAS')) {
+        $rules['ALIAS'] = 'nullable|string';
+    }
+
+    if ($request->has('remark')) {
+        $rules['remark'] = 'nullable|string';
+    }
+
+    if ($request->has('display_in_front')) {
+        $rules['display_in_front'] = 'nullable|integer';
+    }
+
+    if ($request->has('sort_order')) {
+        $rules['sort_order'] = 'nullable|integer';
+    }
+
+    $data = $request->validate($rules);
+
+    $data['date_modify'] = now();
+
+    $cut->update($data);
+
+    return response()->json(['message' => 'Record updated successfully.'], 200);
+}
+
     public function destroy($id)
     {
         $cut = DiamondCut::findOrFail($id);

@@ -31,22 +31,44 @@ class DiamondFancyColorIntensityMasterController extends Controller
         DiamondFancyColorIntensity::create($validated);
         return response()->json(['success' => true]);
     }
+public function update(Request $request, $id)
+{
+    $rules = [];
 
-    public function update(Request $request, $id)
-    {
-        $validated = $request->validate([
-            'fci_name' => 'nullable|string|max:250',
-            'fci_short_name' => 'nullable|string|max:250',
-            'fci_alias' => 'nullable|string',
-            'fci_remark' => 'nullable|string',
-            'fci_display_in_front' => 'nullable|boolean',
-            'fci_sort_order' => 'nullable|integer',
-        ]);
-        $validated['date_modify'] = now();
-        $intensity = DiamondFancyColorIntensity::findOrFail($id);
-        $intensity->update($validated);
-        return response()->json(['success' => true]);
+    if ($request->has('fci_name')) {
+        $rules['fci_name'] = 'required|string|max:250';
     }
+
+    if ($request->has('fci_short_name')) {
+        $rules['fci_short_name'] = 'nullable|string|max:250';
+    }
+
+    if ($request->has('fci_alias')) {
+        $rules['fci_alias'] = 'nullable|string';
+    }
+
+    if ($request->has('fci_remark')) {
+        $rules['fci_remark'] = 'nullable|string';
+    }
+
+    if ($request->has('fci_display_in_front')) {
+        $rules['fci_display_in_front'] = 'nullable|boolean';
+    }
+
+    if ($request->has('fci_sort_order')) {
+        $rules['fci_sort_order'] = 'nullable|integer';
+    }
+
+    $validated = $request->validate($rules);
+
+    $validated['date_modify'] = now();
+
+    $intensity = DiamondFancyColorIntensity::findOrFail($id);
+    $intensity->update($validated);
+
+    return response()->json(['success' => true]);
+}
+
 
     public function show($id)
 {

@@ -47,7 +47,8 @@
                     <div class="modal-body row g-2">
                         <div class="col-12">
                             <label>Name</label>
-                            <input type="text" class="form-control" id="name" name="name" required>
+                            <input type="text" class="form-control" id="name" name="name">
+                            <div class="text-danger mt-1" id="error-name"></div> <!-- Error container -->
                         </div>
                         <div class="col-6">
                             <label>Alias</label>
@@ -168,8 +169,12 @@
                     },
                     error: function(xhr) {
                         let errors = xhr.responseJSON?.errors || {};
-                        let msg = Object.values(errors).join('<br>');
-                        $('#formError').html(msg || 'An error occurred');
+                        $('#clarityForm .text-danger').html('');
+
+                        // Display field-specific errors
+                        for (let field in errors) {
+                            $(`#error-${field}`).html(errors[field][0]);
+                        }
                         toastr.error("Failed to save record!");
                     }
                 });

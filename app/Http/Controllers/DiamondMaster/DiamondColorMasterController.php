@@ -20,7 +20,7 @@ class DiamondColorMasterController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name' => 'nullable|string|max:250',
+            'name' => 'required|string|max:250',
             'ALIAS' => 'nullable|string|max:250',
             'short_name' => 'nullable|string|max:150',
             'remark' => 'nullable|string|max:500',
@@ -48,22 +48,45 @@ class DiamondColorMasterController extends Controller
 {
     $color = DiamondColor::findOrFail($id);
 
-    $data = $request->validate([
-        'name' => 'nullable|string|max:250',
-        'ALIAS' => 'nullable|string|max:250',
-        'short_name' => 'nullable|string|max:150',
-        'remark' => 'nullable|string|max:500',
-        'display_in_front' => 'nullable|integer',
-        'dc_is_fancy_color' => 'nullable|integer',
-        'sort_order' => 'nullable|integer',
-    ]);
-    
+    $rules = [];
+
+    if ($request->has('name')) {
+        $rules['name'] = 'required|string|max:250';
+    }
+
+    if ($request->has('ALIAS')) {
+        $rules['ALIAS'] = 'nullable|string|max:250';
+    }
+
+    if ($request->has('short_name')) {
+        $rules['short_name'] = 'nullable|string|max:150';
+    }
+
+    if ($request->has('remark')) {
+        $rules['remark'] = 'nullable|string|max:500';
+    }
+
+    if ($request->has('display_in_front')) {
+        $rules['display_in_front'] = 'nullable|integer';
+    }
+
+    if ($request->has('dc_is_fancy_color')) {
+        $rules['dc_is_fancy_color'] = 'nullable|integer';
+    }
+
+    if ($request->has('sort_order')) {
+        $rules['sort_order'] = 'nullable|integer';
+    }
+
+    $data = $request->validate($rules);
+
     $data['date_modify'] = Carbon::now();
 
     $color->update($data);
 
     return response()->json(['status' => 'Diamond Color updated successfully']);
 }
+
 
     public function destroy($id)
     {

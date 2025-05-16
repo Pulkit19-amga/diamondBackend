@@ -48,7 +48,8 @@
                     <div class="modal-body row g-2">
                         <div class="col-12">
                             <label>Name</label>
-                            <input type="text" class="form-control" name="name" required>
+                            <input type="text" class="form-control" name="name">
+                             <div class="text-danger mt-1" id="error-name"></div> <!-- Error container -->
                         </div>
                         <div class="col-6">
                             <label>Alias</label>
@@ -63,7 +64,7 @@
                             <input type="text" class="form-control" name="remark">
                         </div>
 
-                        <div class="col-6 d-flex align-items-center">
+                        <div class="col-6">
                             <label>Display In Front</label>
                             <select class="form-control" id="display_in_front" name="display_in_front">
                                 <option value="1">Yes</option>
@@ -81,13 +82,13 @@
 
                         <div class="col-6">
                             <label>Sort Order</label>
-                            <input type="number" class="form-control" name="sort_order">
+                            <input type="number" class="form-control" id="sort_order" name="sort_order">
                         </div>
 
                         <div id="formError" class="text-danger mt-2"></div>
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary me-2">Save</button>
+                        <button type="submit" class="btn btn-primary me-2" id="saveColorBtn">Save</button>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     </div>
                 </div>
@@ -129,7 +130,7 @@
             $('#addColorBtn').click(function() {
                 $('#colorForm')[0].reset();
                 $('#editId').val('');
-
+                 $('#saveColorBtn').text('Save');
                 $('#formError').text('');
             });
 
@@ -146,7 +147,10 @@
                     $('#dc_is_fancy_color').prop('checked', data.dc_is_fancy_color == 1);
                     $('#sort_order').val(data.sort_order);
                     $('#formError').text('');
+                    $('#saveColorBtn').text('Update')
+                   $('#colorForm .text-danger').html('');
                     $('#colorModal').modal('show');
+                    
                 });
             });
 
@@ -174,8 +178,12 @@
                     },
                     error: function(xhr) {
                         let errors = xhr.responseJSON?.errors || {};
-                        let msg = Object.values(errors).join('<br>');
-                        $('#formError').html(msg || 'An error occurred');
+                         $('#colorForm .text-danger').html('');
+
+                        // Display field-specific errors
+                        for (let field in errors) {
+                            $(`#error-${field}`).html(errors[field][0]);
+                        }
                     }
                 });
             });
@@ -201,7 +209,7 @@
                     if (!deleteId) return;
 
                     $.ajax({
-                        url: `/admin/diamond-color/${deleteId}`,
+                        url: `/api/admin/diamond-color/${deleteId}`,
                         type: 'POST',
                         data: {
                             _token: '{{ csrf_token() }}',

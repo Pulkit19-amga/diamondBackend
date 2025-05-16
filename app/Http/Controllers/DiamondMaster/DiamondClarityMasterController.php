@@ -19,7 +19,7 @@ class DiamondClarityMasterController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name'             => 'nullable|string',
+            'name'             => 'required|string',
             'ALIAS'            => 'nullable|string',
             'remark'           => 'nullable|string',
             'display_in_front' => 'nullable|integer',

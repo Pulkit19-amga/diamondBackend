@@ -171,14 +171,22 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
         Route::put('/vendor/{id}',   'update')->name('vendor.update');
         Route::delete('/vendor/{id}','destroy')->name('vendor.destroy');
     });
-
-    Route::controller(DiamondMasterController::class)->group(function(){
-        Route::get('/diamond-master', 'index')->name('diamond-master.index');
-        Route::get('/diamond-master/data', 'data')->name('diamond-master.data');
-        Route::post('/diamond-master', 'store')->name('diamond-master.store');
-        Route::get('/diamond-master/{id}', 'edit')->name('diamond-master.edit');
-        Route::put('/diamond-master/{id}', 'update')->name('diamond-master.update');
-        Route::delete('/diamond-master/{id}', 'destroy')->name('diamond-master.destroy');
-        Route::post('/diamond-master/update-status/{id}', [DiamondMasterController::class, 'updateStatus']);
-    }); 
+      Route::controller(DiamondMasterController::class)->group(function(){
+        Route::get('diamond-master', 'index')->name('diamond-master.index');
+        Route::get('diamond-master/data','dataBackend')->name('diamond-master.data');
+        Route::get('DiamondMaster/master/create','create')->name('diamond-master.create');
+        Route::post('diamond-master','store')->name('diamond-master.store');
+        Route::get('diamond-master/{id}/edit', 'edit')->name('diamond-master.edit');
+        Route::put('diamond-master/{id}', 'update')->name('diamond-master.update');
+        Route::delete('diamond-master/{id}',  'destroy')->name('diamond-master.destroy');
+    });
+    // Route::controller(DiamondMasterController::class)->group(function(){
+    //     Route::get('/diamond-master', 'index')->name('diamond-master.index');
+    //     Route::get('/diamond-master/data', 'data')->name('diamond-master.data');
+    //     Route::post('/diamond-master', 'store')->name('diamond-master.store');
+    //     Route::get('/diamond-master/{id}', 'edit')->name('diamond-master.edit');
+    //     Route::put('/diamond-master/{id}', 'update')->name('diamond-master.update');
+    //     Route::delete('/diamond-master/{id}', 'destroy')->name('diamond-master.destroy');
+    //     Route::post('/diamond-master/update-status/{id}', [DiamondMasterController::class, 'updateStatus']);
+    // }); 
 });

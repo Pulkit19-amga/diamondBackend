@@ -7,7 +7,7 @@ use App\Models\DiamondVendor;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class DiamondMaster extends Model
+class DiamondMasterNew extends Model
 {
     use HasFactory;
 
@@ -29,11 +29,6 @@ class DiamondMaster extends Model
         return $this->belongsTo(DiamondColor::class, 'color');
     }
 
-    public function cut()
-    {
-        return $this->belongsTo(DiamondCut::class, 'cut');
-    }
-
     // Define the relationship with the Clarity model
     public function clarity()
     {
@@ -42,19 +37,11 @@ class DiamondMaster extends Model
 
     public function polish()
     {
-        return $this->belongsTo(DiamondPolish::class, 'polish');
+        return $this->belongsTo(DiamondClarityMaster::class, 'polish');
     }
 
-    public function symmetry()
-    {
-        return $this->belongsTo(DiamondSymmetry::class, 'symmetry');
-    }
+    // DiamondMaster.php
 
-    public function fluorescence()
-    {
-        return $this->belongsTo(DiamondFlourescence::class, 'fluorescence');
-    }
-  
     public function certificateCompany()
     {
         return $this->belongsTo(DiamondLab::class, 'certificate_company', 'dl_id');
@@ -150,7 +137,7 @@ class DiamondMaster extends Model
         'fluorescence',
         'culet',
         'date_added',
-        'added_by',
+        'added_by', 
         'date_updated',
         'updated_by'
     ];
