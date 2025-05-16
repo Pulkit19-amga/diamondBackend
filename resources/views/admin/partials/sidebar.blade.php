@@ -126,7 +126,7 @@
                     </a>
                 </li>
                 <li class="menu-item {{ request()->routeIs('girdle.index') ? 'active' : '' }}">
-                    <a href="#" class="menu-link">
+                    <a href="{{ route('fancy-color-intensity.index') }}" class="menu-link">
                         <div class="text-truncate" data-i18n="fancyColor">Fancy Color Intensity</div>
                     </a>
                 </li>

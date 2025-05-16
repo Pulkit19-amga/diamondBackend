@@ -50,8 +50,10 @@
                         </div>
                         <div class="mb-3">
                             <label for="dl_display_in_front">Display In Front</label>
-                            <input type="number" class="form-control" id="dl_display_in_front" name="dl_display_in_front"
-                                value="0">
+                            <select class="form-control"id="dl_display_in_front" name="dl_display_in_front">
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label for="dl_sort_order">Sort Order</label>
@@ -173,27 +175,52 @@
                 });
             });
 
-            $(document).on('click', '.deleteBtn', function() {
-                const id = $(this).data('id');
-                const row = $(this).closest('tr');
-                if (confirm("Are you sure?")) {
+            $(document).ready(function() {
+                let deleteId = null;
+                let $currentRow = null;
+
+                $(document).on('click', '.deleteBtn', function() {
+
+                    deleteId = $(this).data('id');
+                    $currentRow = $(this).closest('tr');
+                    $('.popup-modal.remove-modal').fadeIn(); // Show the modal
+                });
+
+                // Close modal on No or overlay click
+                $(document).on('click', '.close-pop', function() {
+                    $('.popup-modal.remove-modal').fadeOut(); // Hide the modal
+                });
+
+                // Confirm delete
+                $('#confirmDelete').on('click', function() {
+                    if (!deleteId) return;
+
                     $.ajax({
-                        url: `{{ url('admin/lab') }}/${id}`,
+                        url: `/admin/lab/${deleteId}`,
                         type: 'POST',
                         data: {
                             _token: '{{ csrf_token() }}',
                             _method: 'DELETE'
                         },
-                        success: function() {
-                            row.remove();
-                            toastr.success("Record deleted successfully!")
-                            fetchlabs();
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.success) {
+                                $currentRow.remove();
+                                toastr.success(response.message);
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 1000);
+                            } else {
+                                toastr.error("Unexpected server response.");
+                            }
+                            $('.popup-modal.remove-modal').fadeOut(); // Close the modal
                         },
-                        error: function() {
+                        error: function(xhr) {
                             toastr.error("Failed to delete the record.");
+                            $('.popup-modal.remove-modal').fadeOut(); // Close the modal
                         }
                     });
-                }
+                });
             });
         });
         $(document).on('blur', '.sort-order', function() {

@@ -26,32 +26,49 @@ class DiamondCuletController extends Controller
             'dc_remark' => 'nullable|string',
             'dc_display_in_front' => 'nullable|integer',
             'dc_sort_order' => 'nullable|integer',
-            'date_added' => 'nullable|date',
-            'date_modify' => 'nullable|date',
         ]);
-    
+        $data['date_added'] = now();
         DiamondCulet::create($data);
     
         return response()->json(['message' => 'Record added successfully.'], 200);
     }
     
-    public function update(Request $request, $id)
+  public function update(Request $request, $id)
     {
         $culet = DiamondCulet::findOrFail($id);
-    
-        $data = $request->validate([
-            'dc_name' => 'nullable|string|max:250',
-            'dc_short_name' => 'nullable|string|max:250',
-            'dc_alise' => 'nullable|string',
-            'dc_remark' => 'nullable|string',
-            'dc_display_in_front' => 'nullable|integer',
-            'dc_sort_order' => 'nullable|integer',
-            'date_added' => 'nullable|date',
-            'date_modify' => 'nullable|date',
-        ]);
-    
+
+        $rules = [];
+
+        if ($request->has('dc_name')) {
+            $rules['dc_name'] = 'required|string|max:250';
+        }
+
+        if ($request->has('dc_short_name')) {
+            $rules['dc_short_name'] = 'nullable|string|max:250';
+        }
+
+        if ($request->has('dc_alise')) {
+            $rules['dc_alise'] = 'nullable|string';
+        }
+
+        if ($request->has('dc_remark')) {
+            $rules['dc_remark'] = 'nullable|string';
+        }
+
+        if ($request->has('dc_display_in_front')) {
+            $rules['dc_display_in_front'] = 'nullable|integer';
+        }
+
+        if ($request->has('dc_sort_order')) {
+            $rules['dc_sort_order'] = 'nullable|integer';
+        }
+
+        $data = $request->validate($rules);
+
+        $data['date_modify'] = now();
+
         $culet->update($data);
-    
+
         return response()->json(['message' => 'Record updated successfully.'], 200);
     }
     public function destroy($id)
@@ -59,7 +76,7 @@ class DiamondCuletController extends Controller
         $culet = DiamondCulet::findOrFail($id);
         $culet->delete();
         if (request()->ajax()) {
-            return response()->json(['message' => 'Record deleted successfully.'], 200);
+            return response()->json(['success' => true, 'message' => 'Record deleted successfully.']);
         }
 
         return redirect()->route('culet.index')

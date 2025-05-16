@@ -26,44 +26,80 @@ class DiamondFancyColorController extends Controller
             'fco_remark' => 'nullable|string',
             'fco_display_in_front' => 'nullable|integer',
             'fco_sort_order' => 'nullable|integer',
-            'date_added' => 'nullable|date',
-            'date_modify' => 'nullable|date',
         ]);
-    
+        $data['date_added'] = now();
         DiamondFancyColor::create($data);
-    
+
         return response()->json(['message' => 'Record added successfully.'], 200);
     }
-    
     public function update(Request $request, $id)
     {
         $fancyColor = DiamondFancyColor::findOrFail($id);
-    
-        $data = $request->validate([
-            'fco_name' => 'nullable|string|max:250',
-            'fco_alise' => 'nullable|string',
-            'fco_short_name' => 'nullable|string|max:250',
-            'fco_remark' => 'nullable|string',
-            'fco_display_in_front' => 'nullable|integer',
-            'fco_sort_order' => 'nullable|integer',
-            'date_added' => 'nullable|date',
-            'date_modify' => 'nullable|date',
-        ]);
-    
+
+        $rules = [];
+
+        if ($request->has('fco_name')) {
+            $rules['fco_name'] = 'required|string|max:250';
+        }
+
+        if ($request->has('fco_alise')) {
+            $rules['fco_alise'] = 'nullable|string';
+        }
+
+        if ($request->has('fco_short_name')) {
+            $rules['fco_short_name'] = 'nullable|string|max:250';
+        }
+
+        if ($request->has('fco_remark')) {
+            $rules['fco_remark'] = 'nullable|string';
+        }
+
+        if ($request->has('fco_display_in_front')) {
+            $rules['fco_display_in_front'] = 'nullable|integer';
+        }
+
+        if ($request->has('fco_sort_order')) {
+            $rules['fco_sort_order'] = 'nullable|integer';
+        }
+
+        $data = $request->validate($rules);
+
+        $data['date_modify'] = now();
+
         $fancyColor->update($data);
-    
+
         return response()->json(['message' => 'Record updated successfully.'], 200);
     }
+
+
+    // public function update(Request $request, $id)
+    // {
+    //     $fancyColor = DiamondFancyColor::findOrFail($id);
+
+    //     $data = $request->validate([
+    //         'fco_name' => 'nullable|string|max:250',
+    //         'fco_alise' => 'nullable|string',
+    //         'fco_short_name' => 'nullable|string|max:250',
+    //         'fco_remark' => 'nullable|string',
+    //         'fco_display_in_front' => 'nullable|integer',
+    //         'fco_sort_order' => 'nullable|integer',
+
+    //     ]);
+    //     $data['date_modify'] = now();
+    //     $fancyColor->update($data);
+
+    //     return response()->json(['message' => 'Record updated successfully.'], 200);
+    // }
     public function destroy($id)
     {
         $fancyColor = DiamondFancyColor::findOrFail($id);
         $fancyColor->delete();
         if (request()->ajax()) {
-            return response()->json(['message' => 'Record deleted successfully.'], 200);
+            return response()->json(['success' => true, 'message' => 'Record deleted successfully.']);
         }
 
         return redirect()->route('fancyColor.index')
-        ->with('success', 'Record deleted successfully.');
+            ->with('success', 'Record deleted successfully.');
     }
     public function show(DiamondFancyColor $id)
     {

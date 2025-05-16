@@ -74,6 +74,9 @@ class DiamondShapeController extends Controller
         $shape = DiamondShape::findOrFail($id);
         $shape->delete();
 
+        if (request()->ajax()) {
+            return response()->json(['success' => true, 'message' => 'Record deleted successfully.']);
+        }
         return redirect()->route('shapes.index')
             ->with('success', 'Record deleted successfully.');
     }

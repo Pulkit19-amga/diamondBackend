@@ -69,7 +69,7 @@ class DiamondLabMasterController extends Controller
         } else {
             // Full update
             $data = $request->validate([
-                'dl_name' => 'nullable|string|max:250',
+                'dl_name' => 'required|string|max:250',
                 'dl_display_in_front' => 'nullable|integer',
                 'dl_sort_order' => 'nullable|integer',
                 'image' => 'required|string|max:255',
@@ -88,6 +88,10 @@ class DiamondLabMasterController extends Controller
     {
         $lab = DiamondLab::findOrFail($id);
         $lab->delete();
+        if (request()->ajax()) {
+            return response()->json(['success' => true, 'message' => 'Record deleted successfully.']);
+        }
+
         return redirect()->route('diamondlab.index')
             ->with('success', 'Record deleted successfully.');
     }

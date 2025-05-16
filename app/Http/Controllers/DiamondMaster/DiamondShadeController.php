@@ -59,6 +59,10 @@ class DiamondShadeController extends Controller
         $shade = DiamondShade::findOrFail($id);
         $shade->delete();
 
+        if (request()->ajax()) {
+            return response()->json(['success' => true, 'message' => 'Record deleted successfully.']);
+        }
+
         return redirect()->route('shades.index')
             ->with('success', 'Record deleted successfully.');
     }

@@ -21,6 +21,8 @@
                             <th>Display In Front</th>
                             <th>Fancy Color?</th>
                             <th>Sort Order</th>
+                            <th>Date Added</th>
+                            <th>Date Modify</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -46,7 +48,8 @@
                     <div class="modal-body row g-2">
                         <div class="col-12">
                             <label>Name</label>
-                            <input type="text" class="form-control" name="name" required>
+                            <input type="text" class="form-control" name="name">
+                             <div class="text-danger mt-1" id="error-name"></div> <!-- Error container -->
                         </div>
                         <div class="col-6">
                             <label>Alias</label>
@@ -61,7 +64,8 @@
                             <input type="text" class="form-control" name="remark">
                         </div>
 
-                        <div class="col-6 d-flex align-items-center">
+                        <div class="col-6">
+                            <label>Display In Front</label>
                             <select class="form-control" id="display_in_front" name="display_in_front">
                                 <option value="1">Yes</option>
                                 <option value="0">No</option>
@@ -78,13 +82,13 @@
 
                         <div class="col-6">
                             <label>Sort Order</label>
-                            <input type="number" class="form-control" name="sort_order">
+                            <input type="number" class="form-control" id="sort_order" name="sort_order">
                         </div>
 
                         <div id="formError" class="text-danger mt-2"></div>
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary me-2">Save</button>
+                        <button type="submit" class="btn btn-primary me-2" id="saveColorBtn">Save</button>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     </div>
                 </div>
@@ -110,6 +114,8 @@
                         <td><input type="checkbox" ${r.display_in_front == 1 ? 'checked' : ''} class="display_in_front" data-id="${r.id}"></td>
                         <td>${r.dc_is_fancy_color == 1 ? 'Yes' : 'No'}</td>
                         <td><input type="number" value="${r.sort_order}" class="sort-order" data-id="${r.id}" style="width: 60px;"></td>
+                         <td>${r.date_added ? r.date_added : ''}</td>
+                    <td>${r.date_modify ? r.date_modify: ''}</td>
                         <td>
                             <button class="btn btn-sm btn-info editBtn" data-id="${r.id}"><i class="fa fa-edit"></i></button>
                             <button class="btn btn-sm btn-danger deleteBtn" data-id="${r.id}"><i class="fa fa-trash"></i></button>
@@ -124,7 +130,7 @@
             $('#addColorBtn').click(function() {
                 $('#colorForm')[0].reset();
                 $('#editId').val('');
-
+                 $('#saveColorBtn').text('Save');
                 $('#formError').text('');
             });
 
@@ -141,7 +147,10 @@
                     $('#dc_is_fancy_color').prop('checked', data.dc_is_fancy_color == 1);
                     $('#sort_order').val(data.sort_order);
                     $('#formError').text('');
+                    $('#saveColorBtn').text('Update')
+                   $('#colorForm .text-danger').html('');
                     $('#colorModal').modal('show');
+                    
                 });
             });
 
@@ -169,27 +178,62 @@
                     },
                     error: function(xhr) {
                         let errors = xhr.responseJSON?.errors || {};
-                        let msg = Object.values(errors).join('<br>');
-                        $('#formError').html(msg || 'An error occurred');
+                         $('#colorForm .text-danger').html('');
+
+                        // Display field-specific errors
+                        for (let field in errors) {
+                            $(`#error-${field}`).html(errors[field][0]);
+                        }
                     }
                 });
             });
 
-            $(document).on('click', '.deleteBtn', function() {
-                const id = $(this).data('id');
-                if (confirm("Are you sure?")) {
+            $(document).ready(function() {
+                let deleteId = null;
+                let $currentRow = null;
+
+                $(document).on('click', '.deleteBtn', function() {
+
+                    deleteId = $(this).data('id');
+                    $currentRow = $(this).closest('tr');
+                    $('.popup-modal.remove-modal').fadeIn(); // Show the modal
+                });
+
+                // Close modal on No or overlay click
+                $(document).on('click', '.close-pop', function() {
+                    $('.popup-modal.remove-modal').fadeOut(); // Hide the modal
+                });
+
+                // Confirm delete
+                $('#confirmDelete').on('click', function() {
+                    if (!deleteId) return;
+
                     $.ajax({
-                        url: `{{ url('admin/diamond-color') }}/${id}`,
+                        url: `/api/admin/diamond-color/${deleteId}`,
                         type: 'POST',
                         data: {
                             _token: '{{ csrf_token() }}',
                             _method: 'DELETE'
                         },
-                        success: function() {
-                            fetchColors();
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.success) {
+                                $currentRow.remove();
+                                toastr.success(response.message);
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 1000);
+                            } else {
+                                toastr.error("Unexpected server response.");
+                            }
+                            $('.popup-modal.remove-modal').fadeOut(); // Close the modal
+                        },
+                        error: function(xhr) {
+                            toastr.error("Failed to delete the record.");
+                            $('.popup-modal.remove-modal').fadeOut(); // Close the modal
                         }
                     });
-                }
+                });
             });
         });
         $(document).on('blur', '.sort-order', function() {

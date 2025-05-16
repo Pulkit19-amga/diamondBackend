@@ -27,41 +27,62 @@ class DiamondCutController extends Controller
             'remark' => 'nullable|string',
             'display_in_front' => 'nullable|integer',
             'sort_order' => 'nullable|integer',
-            'date_added' => 'nullable|date',
-            'date_modify' => 'nullable|date',
         ]);
-
+        $data['date_added'] = now();
         DiamondCut::create($data);
 
         return response()->json(['message' => 'Record added successfully.'], 200);
     }
 
-    public function update(Request $request, $id)
-    {
-        $cut = DiamondCut::findOrFail($id);
+  public function update(Request $request, $id)
+{
+    $cut = DiamondCut::findOrFail($id);
 
-        $data = $request->validate([
-            'name' => 'nullable|string|max:250',
-            'shortname' => 'nullable|string|max:250',
-            'full_name' => 'nullable|string|max:250',
-            'ALIAS' => 'nullable|string',
-            'remark' => 'nullable|string',
-            'display_in_front' => 'nullable|integer',
-            'sort_order' => 'nullable|integer',
-            'date_added' => 'nullable|date',
-            'date_modify' => 'nullable|date',
-        ]);
+    $rules = [];
 
-        $cut->update($data);
-
-        return response()->json(['message' => 'Record updated successfully.'], 200);
+    if ($request->has('name')) {
+        $rules['name'] = 'required|string|max:250';
     }
+
+    if ($request->has('shortname')) {
+        $rules['shortname'] = 'nullable|string|max:250';
+    }
+
+    if ($request->has('full_name')) {
+        $rules['full_name'] = 'nullable|string|max:250';
+    }
+
+    if ($request->has('ALIAS')) {
+        $rules['ALIAS'] = 'nullable|string';
+    }
+
+    if ($request->has('remark')) {
+        $rules['remark'] = 'nullable|string';
+    }
+
+    if ($request->has('display_in_front')) {
+        $rules['display_in_front'] = 'nullable|integer';
+    }
+
+    if ($request->has('sort_order')) {
+        $rules['sort_order'] = 'nullable|integer';
+    }
+
+    $data = $request->validate($rules);
+
+    $data['date_modify'] = now();
+
+    $cut->update($data);
+
+    return response()->json(['message' => 'Record updated successfully.'], 200);
+}
+
     public function destroy($id)
     {
         $cut = DiamondCut::findOrFail($id);
         $cut->delete();
         if (request()->ajax()) {
-            return response()->json(['message' => 'Record deleted successfully.'], 200);
+            return response()->json(['success' => true, 'message' => 'Record deleted successfully.']);
         }
 
         return redirect()->route('cut.index')
