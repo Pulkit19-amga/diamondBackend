@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\DiamondMaster\DiamondCutController;
@@ -36,6 +37,10 @@ use App\Http\Controllers\DiamondMaster\DiamondFancyColorIntensityMasterControlle
 Route::get('/', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
 Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
 Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
+Route::get('/admin/forgetPassword',[AuthController::class,'forgetPasswordView'])->name('admin.forget');
+Route::post('/password/email', [AuthController::class, 'sendResetLink'])->name('sendResetLink');
+Route::get('password/reset/{token}', [AuthController::class, 'showResetForm'])->name('password.reset');
+Route::post('/password/reset', [AuthController::class, 'forgetPassword']);
 
 Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/dashboard', function () {

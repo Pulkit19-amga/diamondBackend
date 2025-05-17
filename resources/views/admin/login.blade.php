@@ -108,7 +108,7 @@
                             <input class="form-check-input" type="checkbox" id="remember-me" name="remember" />
                             <label class="form-check-label" for="remember-me"> Remember Me </label>
                         </div>
-                        <a href="#">Forgot Password?</a>
+                        <a href="{{ route('admin.forget') }}">Forgot Password?</a>
                     </div>
                 </div>
                 <button class="btn btn-primary d-grid w-100" type="submit">Login</button>

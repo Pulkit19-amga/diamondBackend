@@ -1,7 +1,7 @@
 <?php
- 
+
 namespace App\Http\Controllers;
- 
+
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -15,37 +15,37 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'name'      => 'required|string|max:255',
-            'email'     => 'required|email|unique:users,email',
-            'password'  => 'required|min:6|confirmed',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:6|confirmed',
             'user_type' => 'required|in:user,admin,vendor',
         ]);
 
         $user = User::create([
-            'name'      => $request->name,
-            'email'     => $request->email,
-            'password'  => bcrypt($request->password),
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
             'user_type' => $request->user_type,
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
-            'success'      => true,
-            'message'      => 'Registration successful.',
+            'success' => true,
+            'message' => 'Registration successful.',
             'access_token' => $token,
-            'token_type'   => 'Bearer',
-            'user_type'    => $user->user_type,
+            'token_type' => 'Bearer',
+            'user_type' => $user->user_type,
         ], 201);
     }
 
     public function login(Request $request)
     {
         $request->validate([
-            'email'    => 'required|email',
+            'email' => 'required|email',
             'password' => 'required',
         ]);
- 
+
         $user = User::where('email', $request->email)->first();
         if (!$user || !Hash::check($request->password, $user->password)) {
 
@@ -53,13 +53,13 @@ class AuthController extends Controller
                 'email' => ['Incorrect credentials'],
             ]);
         }
- 
+
         $token = $user->createToken('auth_token')->plainTextToken;
         return response()->json([
             'success' => true,
             'message' => 'Login successful.',
-            'user'    => $user,
-            'token'   => $token,
+            'user' => $user,
+            'token' => $token,
         ]);
     }
     public function resetPassword(Request $request)
@@ -103,6 +103,13 @@ class AuthController extends Controller
             'message' => 'Password updated successfully.'
         ]);
     }
+
+    //Forget Password
+
+    public function forgetPasswordView()
+    {
+        return view('admin.auth.forgetPassword');
+    }
     public function sendResetLink(Request $request)
     {
         $request->validate([
@@ -113,20 +120,37 @@ class AuthController extends Controller
             $request->only('email')
         );
 
-        if ($status === Password::RESET_LINK_SENT) {
-            return response()->json(['message' => trans($status)]);
+        // For API/React
+        if ($request->expectsJson()) {
+            if ($status === Password::RESET_LINK_SENT) {
+                return response()->json(['message' => trans($status)]);
+            }
+            return response()->json(['message' => trans($status)], 500);
         }
 
-        return response()->json(['message' => trans($status)], 500);
+        // For Laravel Blade
+        return back()->with('status', trans($status));
     }
 
-    public function showResetForm(Request $request)
+    public function showResetForm(Request $request, $token)
     {
-        return response()->json([
-            'token' => $request->query('token'),
-            'email' => $request->query('email'),
+        $email = $request->query('email');
+
+        if ($request->expectsJson()) {
+            // React / API
+            return response()->json([
+                'token' => $token,
+                'email' => $email,
+            ]);
+        }
+
+        // Blade / Web
+        return view('admin.auth.forgetPasswordReset', [
+            'token' => $token,
+            'email' => $email,
         ]);
     }
+
 
     public function forgetPassword(Request $request)
     {
@@ -159,6 +183,6 @@ class AuthController extends Controller
             'message' => 'Logout successful.',
         ]);
     }
- 
-    
+
+
 }
