@@ -72,19 +72,18 @@ class AuthController extends Controller
 
         $errors = [];
 
-        // If initial validator fails, collect those errors
         if ($validator->fails()) {
             $errors = $validator->errors()->toArray();
-        }
+        } else {
+            // Only check this if current_password is provided and valid per validator
+            if (!Hash::check($request->current_password, $request->user()->password)) {
+                $errors['current_password'][] = 'Current password is incorrect.';
+            }
 
-        // Custom check: current password
-        if (!Hash::check($request->current_password, $request->user()->password)) {
-            $errors['current_password'][] = 'Current password is incorrect.';
-        }
-
-        // Custom check: password match
-        if ($request->new_password !== $request->new_password_confirmation) {
-            $errors['new_password'][] = 'The new password confirmation does not match.';
+            // Check new password confirmation
+            if ($request->new_password !== $request->new_password_confirmation) {
+                $errors['new_password'][] = 'The new password confirmation does not match.';
+            }
         }
 
         if (!empty($errors)) {
@@ -100,8 +99,9 @@ class AuthController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'Password updated successfully.'
+            'message' => 'Password Changed successfully.'
         ]);
+
     }
 
     //Forget Password

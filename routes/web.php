@@ -46,6 +46,12 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/dashboard', function () {
         return view('admin.dashboard'); // welcome page
     })->name('admin.dashboard');
+    
+    Route::get('/profile',[AdminAuthController::class,'profile'])->name('admin.profile');
+    Route::post('/profile/upload', [AdminAuthController::class, 'upload'])->name('profile.upload');
+    Route::delete('/profile/image', [AdminAuthController::class, 'deleteImage'])->name('profile.deleteImage');
+    Route::get('/changePassword',[AdminAuthController::class,'changePassword'])->name('change.password');
+    Route::post('/changePassword',[AuthController::class,'resetPassword'])->name('admin.reset.password');
 
     Route::controller(DiamondClarityMasterController::class)->group(function () {
         Route::get('/clarity', 'index')->name('clarity.index');

@@ -33,7 +33,8 @@
                               href="javascript:void(0);"
                               data-bs-toggle="dropdown">
                               <div class="avatar avatar-online">
-                                <img src="../assets/img/avatars/1.png" alt class="w-px-40 h-auto rounded-circle" />
+                                
+                                <img src="{{ auth()->user()->image ? asset('storage/profile/' . auth()->user()->image) : asset('assets/img/avatars/1.png') }}" alt class="w-px-40 h-auto rounded-circle" />
                               </div>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
@@ -56,7 +57,7 @@
                                 <div class="dropdown-divider my-1"></div>
                               </li>
                               <li>
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" href="{{ route('admin.profile') }}">
                                   <i class="bx bx-user bx-md me-3"></i><span>My Profile</span>
                                 </a>
                               </li>

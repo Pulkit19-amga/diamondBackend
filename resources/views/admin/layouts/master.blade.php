@@ -11,6 +11,24 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="" />
     <style>
+        .profile-image-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .profile-image-container:hover #deleteImageBtn {
+            display: block !important;
+        }
+
+        #deleteImageBtn {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 5px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 10;
+        }
+
         .popup-modal {
             position: fixed;
             top: 0;
