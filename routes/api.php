@@ -5,13 +5,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\api\CutController;
 use App\Http\Controllers\api\ColorController;
-use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\ShapeController;
-use App\Http\Controllers\Api\LogoutController;
 use App\Http\Controllers\api\PolishController;
 use App\Http\Controllers\api\ClarityController;
 use App\Http\Controllers\Api\ProfileController;
-use App\Http\Controllers\Api\RegisterController;
 use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\DiamondMaster\DiamondMasterController;
 
@@ -51,6 +48,9 @@ Route::get('diamonds/by-polish/{polish_id}', [PolishController::class, 'filterDi
 Route::post('/register', [AuthController::class, 'register']);
 
 Route::post('/login', [AuthController::class, 'login'])->name('login');
+
+Route::get('auth/google/redirect', [AuthController::class, 'redirectToGoogle']);
+Route::get('auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
 
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 

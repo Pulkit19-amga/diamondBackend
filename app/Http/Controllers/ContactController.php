@@ -6,9 +6,40 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\ContactUs; 
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ContactUserMail;
 
 class ContactController extends Controller
 {
+      /**
+     * Show list of contacts (HTML view).
+     */
+    public function index()
+    {
+        $contacts = ContactUs::orderBy('created_at', 'desc')->get();
+        return view('admin.DiamondMaster.Contact.index', compact('contacts'));
+    }
+
+    /**
+     * Send an email to a specific contact.
+     */
+    public function sendMail(Request $request, $id)
+    {
+        $data = $request->validate([
+            'subject' => 'required|string|max:255',
+            'body'    => 'required|string',
+        ]);
+
+        $contact = ContactUs::findOrFail($id);
+
+        Mail::to($contact->email)
+            ->send(new ContactUserMail($data['subject'], $data['body']));
+
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Email sent to ' . $contact->email
+        ]);
+    }
     public function submit(Request $request)
     {
         $validator = Validator::make($request->all(), [

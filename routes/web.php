@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\DiamondMaster\DiamondCutController;
 use App\Http\Controllers\DiamondMaster\DiamondSizeController;
@@ -200,4 +201,9 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     //     Route::delete('/diamond-master/{id}', 'destroy')->name('diamond-master.destroy');
     //     Route::post('/diamond-master/update-status/{id}', [DiamondMasterController::class, 'updateStatus']);
     // }); 
+   Route::controller(ContactController::class)->group(function() {
+    Route::get('/contactUs', 'index')->name('contact.index');
+    Route::post('contact/{id}/mail','sendMail')->name('contact.sendMail');
+
+});
 });
