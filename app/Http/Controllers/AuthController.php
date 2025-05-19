@@ -13,17 +13,23 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
+            'title'     => 'required|string|max:255',
             'name'      => 'required|string|max:255',
             'email'     => 'required|email|unique:users,email',
-            'password'  => 'required|min:6|confirmed',
-            'user_type' => 'required|in:user,admin,vendor',
+            'password'  => 'required|min:6',
+            'dob'       => 'nullable|date',
+            'anniversary_date' => 'nullable|date',
+        
         ]);
  
         $user = User::create([
+            'title'     => $request->title,
             'name'      => $request->name,
             'email'     => $request->email,
             'password'  => bcrypt($request->password),
-            'user_type' => $request->user_type,
+            'dob'       => $request->birth_date,
+            'anniversary_date' =>$request->anniversary_date,
+            'user_type' => 'user',
         ]);
  
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -45,6 +51,7 @@ class AuthController extends Controller
         ]);
  
         $user = User::where('email', $request->email)->first();
+
         if (! $user || ! Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['Incorrect credentials'],
@@ -52,6 +59,7 @@ class AuthController extends Controller
         }
  
         $token = $user->createToken('auth_token')->plainTextToken;
+        
         return response()->json([
             'success' => true,
             'message' => 'Login successful.',

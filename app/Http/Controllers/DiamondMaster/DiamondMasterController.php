@@ -42,7 +42,14 @@ class DiamondMasterController extends Controller
         if ($request->filled('active_tab')) {
             $query->where('diamond_type', (int) $request->get('active_tab'));
         }
-            
+
+        if ($request->filled('selectedReport')) {
+            $report = (int) $request->get('selectedReport');
+
+            if ($report !== 0) {
+                $query->where('certificate_company', $report);
+            }
+        }
 
         if ($request->filled('price')) {
             $price = $request->get('price'); // expects [min, max]
@@ -54,10 +61,22 @@ class DiamondMasterController extends Controller
             $query->whereBetween('carat_weight', $carat);
         }
 
-        if ($request->has('cut') && is_array($request->cut) && count($request->cut) === 2) {
-            $cut = array_map('intval', $request->cut);
-            $query->whereBetween('cut', $cut);
+        if (
+            $request->has('cut') &&
+            is_array($request->cut) &&
+            count($request->cut) === 2 &&
+            is_numeric($request->cut[0]) &&
+            is_numeric($request->cut[1])
+        ) {
+            $start = (int) $request->cut[0];
+            $end = (int) $request->cut[1];
+
+            // Reduce upper limit by 1, but ensure it doesn't go below start
+            $end = max($end - 1, $start);
+
+            $query->whereBetween('cut', [$start, $end]);
         }
+
 
         if ($request->has('color') && is_array($request->color)) {
             $query->whereBetween('color', array_map('intval', $request->color));
@@ -158,15 +177,7 @@ class DiamondMasterController extends Controller
             $query->whereBetween('depth', [$start, $end]);
         }
 
-        // Add similar checks for polish, symmetry, fluorescence, ratio, table, depth, featured, etc.
 
-        // Sorting
-        // if ($request->filled('sort')) {
-        //     $sort = explode(':', $request->get('sort'));
-        //     $column = $sort[0];
-        //     $direction = $sort[1] ?? 'asc';
-        //     $query->orderBy($column, $direction);
-        // }
         if ($request->boolean('featured')) {
             $query->where('is_superdeal', 1);
         }
