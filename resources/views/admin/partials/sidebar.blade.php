@@ -2,7 +2,7 @@
     <div class="app-brand demo">
         <a href="index.html" class="app-brand-link">
             <span class="app-brand-logo demo">
-                <img src="{{ asset('assets/img/admin/logo-black.png') }}" alt="Logo" width="200">
+                <img src="{{ asset('api/assets/img/admin/logo-black.png') }}" alt="Logo" width="200">
             </span>
             <span class="app-brand-text demo menu-text fw-bold ms-2"></span>
         </a>
@@ -126,7 +126,7 @@
                     </a>
                 </li>
                 <li class="menu-item {{ request()->routeIs('girdle.index') ? 'active' : '' }}">
-                    <a href="#" class="menu-link">
+                    <a href="{{ route('fancy-color-intensity.index') }}" class="menu-link">
                         <div class="text-truncate" data-i18n="fancyColor">Fancy Color Intensity</div>
                     </a>
                 </li>
@@ -148,5 +148,112 @@
             </ul>
         </li>
 
+        <!-- Orders -->
+        <li class="menu-item {{ request()->is('/orders') ? 'active open' : '' }}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-home-smile"></i>
+                <div class="text-truncate" data-i18n="Order">Order</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item active">
+                    <a href="{{ route('orders.index') }}" class="menu-link">
+                        <div class="text-truncate" data-i18n="order">Order List</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        <!--create diamond -->
+        <li class="menu-item {{ request()->is('/vendors') ? 'active open' : '' }}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-home-smile"></i>
+                <div class="text-truncate" data-i18n="Diamonds">Diamonds</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item active">
+                    <a href="{{ route('diamond-master.index') }}" class="menu-link">
+                        <div class="text-truncate" data-i18n="diamond-list">Diamond List</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+          <li class="menu-item {{ request()->is('/vendors') ? 'active open' : '' }}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-home-smile"></i>
+                <div class="text-truncate" data-i18n="Jewellery">Jewellery</div>
+            </a>
+            
+            <ul class="menu-sub">
+                <li class="menu-item active">
+                    <a href="{{ route('product.index') }}" class="menu-link">
+                        <div class="text-truncate" data-i18n="Jewellery">Products</div>
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="menu-sub">
+                <li class="menu-item active">
+                    <a href="{{ route('category.index') }}" class="menu-link">
+                        <div class="text-truncate" data-i18n="diamond-list">Category</div>
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="menu-sub">
+                <li class="menu-item active">
+                    <a href="{{ route('metaltype.index') }}" class="menu-link">
+                        <div class="text-truncate" data-i18n="Jewellery">Metal Type</div>
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="menu-sub">
+                <li class="menu-item active">
+                    <a href="{{ route('ProductsToMetalType.index') }}" class="menu-link">
+                        <div class="text-truncate" data-i18n="Jewellery">Products To Metal Type</div>
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="menu-sub">
+                <li class="menu-item active">
+                    <a href="{{ route('diamondqualitygroup.index') }}" class="menu-link">
+                        <div class="text-truncate" data-i18n="Jewellery">Quality Group</div>
+                    </a>
+                </li>
+            </ul>
+
+            {{-- <ul class="menu-sub">
+                <li class="menu-item active">
+                    <a href="{{ route('product.index') }}" class="menu-link">
+                        <div class="text-truncate" data-i18n="Jewellery">Products</div>
+                    </a>
+                </li>
+            </ul> --}}
+
+            <ul class="menu-sub">
+                <li class="menu-item active">
+                    <a href="{{ route('ProductClarity.index') }}" class="menu-link">
+                        <div class="text-truncate" data-i18n="Jewellery">Product Clarity</div>
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="menu-sub">
+                <li class="menu-item active">
+                    <a href="{{ route('product-color.index') }}" class="menu-link">
+                        <div class="text-truncate" data-i18n="Jewellery">Product Color</div>
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="menu-sub">
+                <li class="menu-item active">
+                    <a href="{{ route('product-cut.index') }}" class="menu-link">
+                        <div class="text-truncate" data-i18n="Jewellery">Product Cut</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
     </ul>
 </aside>

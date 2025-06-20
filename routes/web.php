@@ -1,7 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\AdminAuthController;
+use App\Http\Controllers\Jewellery\CategoryController;
 use App\Http\Controllers\DiamondMaster\DiamondCutController;
 use App\Http\Controllers\DiamondMaster\DiamondSizeController;
 use App\Http\Controllers\DiamondMaster\DiamondCuletController;
@@ -19,6 +21,30 @@ use App\Http\Controllers\DiamondMaster\DiamondPolishMasterController;
 use App\Http\Controllers\DiamondMaster\DiamondClarityMasterController;
 use App\Http\Controllers\DiamondMaster\DiamondKeyToSymbolsMasterController;
 use App\Http\Controllers\DiamondMaster\DiamondFancyColorIntensityMasterController;
+use App\Http\Controllers\DiamondMaster\OrderController;
+use App\Http\Controllers\Jewellery\MetalTypeController;
+use App\Http\Controllers\Jewellery\ProductsToMetalTypeController;
+use App\Http\Controllers\Jewellery\DiamondQualityGroupController;
+use App\Http\Controllers\Jewellery\DiamondClarityGroupController;
+use App\Http\Controllers\Jewellery\ProductColorMasterController;
+use App\Http\Controllers\Jewellery\ProductCutMasterController;
+use App\Http\Controllers\Jewellery\ProductController;
+use App\Http\Controllers\Jewellery\ProductImageController;
+use App\Http\Controllers\Jewellery\ProductOptionController;
+use App\Http\Controllers\Jewellery\ProductOptionValueController;
+use App\Http\Controllers\Jewellery\ProductStoneController;
+use App\Http\Controllers\Jewellery\ProductStyleCategoryController;
+use App\Http\Controllers\Jewellery\ProductStyleGroupController;
+use App\Http\Controllers\Jewellery\ProductToCategoryController;
+use App\Http\Controllers\Jewellery\ProductToStyleCategoryController;
+use App\Http\Controllers\Jewellery\ShopZonesController;
+use App\Http\Controllers\Jewellery\ProductAssignOptionController;
+use App\Http\Controllers\Jewellery\GeoZonesController;
+use App\Http\Controllers\Jewellery\ProductToStyleGroupController;
+use App\Http\Controllers\Jewellery\ProductToStoneTypeController;
+use App\Http\Controllers\Jewellery\ProductToOptionController;
+use App\Http\Controllers\Jewellery\CountryController;
+use App\Http\Controllers\Jewellery\ProductToShapeController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -30,22 +56,30 @@ use App\Http\Controllers\DiamondMaster\DiamondFancyColorIntensityMasterControlle
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
 Route::get('/', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
 Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
 Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
+Route::get('/admin/forgetPassword', [AuthController::class, 'forgetPasswordView'])->name('admin.forget');
+Route::post('/password/email', [AuthController::class, 'sendResetLink'])->name('sendResetLink');
+Route::get('password/reset/{token}', [AuthController::class, 'showResetForm'])->name('password.reset');
+Route::post('/password/reset', [AuthController::class, 'forgetPassword']);
+
 
 Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/dashboard', function () {
         return view('admin.dashboard'); // welcome page
     })->name('admin.dashboard');
 
+    Route::get('/profile', [AdminAuthController::class, 'profile'])->name('admin.profile');
+    Route::post('/profile/upload', [AdminAuthController::class, 'upload'])->name('profile.upload');
+    Route::delete('/profile/image', [AdminAuthController::class, 'deleteImage'])->name('profile.deleteImage');
+    Route::get('/changePassword', [AdminAuthController::class, 'changePassword'])->name('change.password');
+    Route::post('/changePassword', [AuthController::class, 'resetPassword'])->name('admin.reset.password');
+
     Route::controller(DiamondClarityMasterController::class)->group(function () {
         Route::get('/clarity', 'index')->name('clarity.index');
         Route::post('/clarity', 'store')->name('clarity.store');
-        Route::get('/clarity/{id}', 'show')->name('clarity.show'); 
+        Route::get('/clarity/{id}', 'show')->name('clarity.show');
         Route::put('/clarity/{id}', 'update')->name('clarity.update');
         Route::delete('/clarity/{id}', 'destroy')->name('clarity.destroy');
     });
@@ -53,7 +87,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::controller(DiamondShadeController::class)->group(function () {
         Route::get('/shades', 'index')->name('shades.index');
         Route::post('/shades', 'store')->name('shades.store');
-        Route::get('/shades/{id}', 'show')->name('shades.show'); 
+        Route::get('/shades/{id}', 'show')->name('shades.show');
         Route::put('/shades/{id}', 'update')->name('shades.update');
         Route::delete('/shades/{id}', 'destroy')->name('shades.destroy');
     });
@@ -61,58 +95,58 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::controller(DiamondShapeController::class)->group(function () {
         Route::get('/shapes', 'index')->name('shapes.index');
         Route::post('/shapes', 'store')->name('shapes.store');
-        Route::get('/shapes/{id}', 'show')->name('shapes.show'); 
+        Route::get('/shapes/{id}', 'show')->name('shapes.show');
         Route::put('/shapes/{id}', 'update')->name('shapes.update');
-        Route::delete('/shapes/{id}', 'destroy')->name('shapes.destroy');    
+        Route::delete('/shapes/{id}', 'destroy')->name('shapes.destroy');
     });
-    
+
     Route::controller(DiamondSizeController::class)->group(function () {
         Route::get('/sizes', 'index')->name('sizes.index');
         Route::post('/sizes', 'store')->name('sizes.store');
-        Route::get('/sizes/{id}', 'show')->name('sizes.show'); 
+        Route::get('/sizes/{id}', 'show')->name('sizes.show');
         Route::put('/sizes/{id}', 'update')->name('sizes.update');
-        Route::delete('/sizes/{id}', 'destroy')->name('sizes.destroy');    
+        Route::delete('/sizes/{id}', 'destroy')->name('sizes.destroy');
     });
 
     Route::controller(DiamondSymmetryController::class)->group(function () {
         Route::get('/symmetry', 'index')->name('symmetry.index');
         Route::post('/symmetry', 'store')->name('symmetry.store');
-        Route::get('/symmetry/{id}', 'show')->name('symmetry.show'); 
+        Route::get('/symmetry/{id}', 'show')->name('symmetry.show');
         Route::put('/symmetry/{id}', 'update')->name('symmetry.update');
-        Route::delete('/symmetry/{id}', 'destroy')->name('symmetry.destroy');    
+        Route::delete('/symmetry/{id}', 'destroy')->name('symmetry.destroy');
     });
     Route::controller(DiamondFlourescenceController::class)->group(function () {
         Route::get('/flourescence', 'index')->name('flourescence.index');
         Route::post('/flourescence', 'store')->name('flourescence.store');
-        Route::get('/flourescence/{id}', 'show')->name('flourescence.show'); 
+        Route::get('/flourescence/{id}', 'show')->name('flourescence.show');
         Route::put('/flourescence/{id}', 'update')->name('flourescence.update');
-        Route::delete('/flourescence/{id}', 'destroy')->name('flourescence.destroy');    
+        Route::delete('/flourescence/{id}', 'destroy')->name('flourescence.destroy');
     });
 
     Route::controller(DiamondFancyColorController::class)->group(function () {
         Route::get('/fancyColor', 'index')->name('fancyColor.index');
         Route::post('/fancyColor', 'store')->name('fancyColor.store');
-        Route::get('/fancyColor/{id}', 'show')->name('fancyColor.show'); 
+        Route::get('/fancyColor/{id}', 'show')->name('fancyColor.show');
         Route::put('/fancyColor/{id}', 'update')->name('fancyColor.update');
-        Route::delete('/fancyColor/{id}', 'destroy')->name('fancyColor.destroy');    
+        Route::delete('/fancyColor/{id}', 'destroy')->name('fancyColor.destroy');
     });
 
     Route::controller(DiamondGirdleController::class)->group(function () {
         Route::get('/girdle', 'index')->name('girdle.index');
         Route::post('/girdle', 'store')->name('girdle.store');
-        Route::get('/girdle/{id}', 'show')->name('girdle.show'); 
+        Route::get('/girdle/{id}', 'show')->name('girdle.show');
         Route::put('/girdle/{id}', 'update')->name('girdle.update');
-        Route::delete('/girdle/{id}', 'destroy')->name('girdle.destroy');    
+        Route::delete('/girdle/{id}', 'destroy')->name('girdle.destroy');
     });
 
     Route::controller(DiamondCuletController::class)->group(function () {
         Route::get('/culet', 'index')->name('culet.index');
         Route::post('/culet', 'store')->name('culet.store');
-        Route::get('/culet/{id}', 'show')->name('culet.show'); 
+        Route::get('/culet/{id}', 'show')->name('culet.show');
         Route::put('/culet/{id}', 'update')->name('culet.update');
-        Route::delete('/culet/{id}', 'destroy')->name('culet.destroy');    
+        Route::delete('/culet/{id}', 'destroy')->name('culet.destroy');
     });
-    
+
     Route::controller(DiamondKeyToSymbolsMasterController::class)->group(function () {
         Route::get('/keyToSymbols', 'index')->name('keytosymbols.index');
         Route::get('/keyToSymbols/create', 'create')->name('keytosymbols.create');
@@ -140,7 +174,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
         Route::put('/polish/{id}', 'update')->name('diamondpolish.update');
         Route::delete('/polish/{id}', 'destroy')->name('diamondpolish.destroy');
     });
-    Route::controller(DiamondColorMasterController::class)->group(function() {
+    Route::controller(DiamondColorMasterController::class)->group(function () {
         Route::get('diamond-color', 'index')->name('color.index');
         Route::post('diamond-color', 'store')->name('color.store');
         Route::get('diamond-color/{id}', 'show');
@@ -151,12 +185,12 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::controller(DiamondCutController::class)->group(function () {
         Route::get('/cut', 'index')->name('cut.index');
         Route::post('/cut', 'store')->name('cut.store');
-        Route::get('/cut/{id}', 'show')->name('cut.show'); 
+        Route::get('/cut/{id}', 'show')->name('cut.show');
         Route::put('/cut/{id}', 'update')->name('cut.update');
-        Route::delete('/cut/{id}', 'destroy')->name('cut.destroy');    
+        Route::delete('/cut/{id}', 'destroy')->name('cut.destroy');
     });
 
-    Route::controller(DiamondFancyColorIntensityMasterController::class)->group(function() {
+    Route::controller(DiamondFancyColorIntensityMasterController::class)->group(function () {
         Route::get('/diamond-fancy-color-intensity', 'index')->name('fancy-color-intensity.index');
         Route::post('/diamond-fancy-color-intensity', 'store')->name('fancy-color-intensity.store');
         Route::get('/diamond-fancy-color-intensity/{id}', 'show')->name('fancy-color-intensity.show');
@@ -164,21 +198,245 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
         Route::delete('/diamond-fancy-color-intensity/{id}', 'destroy')->name('fancy-color-intensity.destroy');
     });
 
-    Route::controller(DiamondVendorController::class)->group(function() {
-        Route::get('/vendor',        'index')->name('vendor.index');
-        Route::post('/vendor',       'store')->name('vendor.store');
-        Route::get('/vendor/{id}',   'show')->name('vendor.show');
-        Route::put('/vendor/{id}',   'update')->name('vendor.update');
-        Route::delete('/vendor/{id}','destroy')->name('vendor.destroy');
+    Route::controller(DiamondVendorController::class)->group(function () {
+        Route::get('/vendor', 'index')->name('vendor.index');
+        Route::post('/vendor', 'store')->name('vendor.store');
+        Route::get('/vendor/{id}', 'show')->name('vendor.show');
+        Route::put('/vendor/{id}', 'update')->name('vendor.update');
+        Route::delete('/vendor/{id}', 'destroy')->name('vendor.destroy');
     });
 
-    Route::controller(DiamondMasterController::class)->group(function(){
-        Route::get('/diamond-master', 'index')->name('diamond-master.index');
-        Route::get('/diamond-master/data', 'data')->name('diamond-master.data');
-        Route::post('/diamond-master', 'store')->name('diamond-master.store');
-        Route::get('/diamond-master/{id}', 'edit')->name('diamond-master.edit');
-        Route::put('/diamond-master/{id}', 'update')->name('diamond-master.update');
-        Route::delete('/diamond-master/{id}', 'destroy')->name('diamond-master.destroy');
-        Route::post('/diamond-master/update-status/{id}', [DiamondMasterController::class, 'updateStatus']);
-    }); 
+    // Route::controller(DiamondMasterController::class)->group(function(){
+    //     Route::get('/diamond-master', 'index')->name('diamond-master.index');
+    //     Route::get('/diamond-master/data', 'data')->name('diamond-master.data');
+    //     Route::post('/diamond-master', 'store')->name('diamond-master.store');
+    //     Route::get('/diamond-master/{id}', 'edit')->name('diamond-master.edit');
+    //     Route::put('/diamond-master/{id}', 'update')->name('diamond-master.update');
+    //     Route::delete('/diamond-master/{id}', 'destroy')->name('diamond-master.destroy');
+    //     Route::post('/diamond-master/update-status/{id}', [DiamondMasterController::class, 'updateStatus']);
+    // }); 
+    Route::controller(DiamondMasterController::class)->group(function () {
+        Route::get('diamond-master', 'index')->name('diamond-master.index');
+        Route::get('diamond-master/data', 'dataBackend')->name('diamond-master.data');
+        Route::get('DiamondMaster/master/create', 'create')->name('diamond-master.create');
+        Route::post('diamond-master', 'store')->name('diamond-master.store');
+        Route::get('diamond-master/{id}/edit', 'edit')->name('diamond-master.edit');
+        Route::put('diamond-master/{id}', 'update')->name('diamond-master.update');
+        Route::delete('diamond-master/{id}', 'destroy')->name('diamond-master.destroy');
+    });
+
+    Route::controller(CategoryController::class)->group(function () {
+        Route::get('category', 'index')->name('category.index');
+        Route::post('category', 'store')->name('category.store');
+        Route::get('category/{id}', 'show')->name('category.show');
+        Route::put('category/{id}', 'update')->name('category.update');
+        Route::delete('category/{id}', 'destroy')->name('category.destroy');
+    });
+
+    Route::controller(\App\Http\Controllers\DiamondMaster\OrderController::class)->group(function(){
+        Route::get('orders', 'index')->name('orders.index');
+        Route::get('orders/fetch', 'fetch')->name('orders.fetch');
+        Route::post('orders/', 'store')->name('orders.store');
+        Route::get('orders/{order}', 'show')->name('orders.show');
+        Route::patch('orders/{order}/status', 'changeStatus')->name('orders.changeStatus');
+        Route::get('orders/{order}/invoice/download', 'downloadInvoice')->name('orders.invoice.download');
+        Route::get('orders/{order}/invoice/send', 'sendInvoice')->name('orders.invoice.send');
+    });
+
+    Route::controller(\App\Http\Controllers\Jewellery\DiamondQualityGroupController::class)->group(function(){
+        Route::get('diamondqualitygroup','index')->name('diamondqualitygroup.index');
+        Route::get('diamondqualitygroup/fetch','fetch')->name('diamondqualitygroup.fetch');
+        Route::post('diamondqualitygroup/store','store')->name('diamondqualitygroup.store');
+        Route::get('diamondqualitygroup/edit/{id}','edit')->name('diamondqualitygroup.edit');
+        Route::post('diamondqualitygroup/update/{id}','update')->name('diamondqualitygroup.update');
+        Route::delete('diamondqualitygroup/destroy/{id}','destroy')->name('diamondqualitygroup.destroy');
+    });
+
+    Route::controller(\App\Http\Controllers\Jewellery\ProductClarityMasterController::class)->group(function(){
+        Route::get('product-clarity-master/', 'index')->name('ProductClarity.index');
+        Route::get('product-clarity-master/fetch', 'fetchData')->name('ProductClarity.fetch');
+        Route::post('product-clarity-master/store', 'store')->name('ProductClarity.store');
+        Route::get('product-clarity-master/edit/{id}', 'edit')->name('ProductClarity.edit');
+        Route::put('product-clarity-master/update/{id}', 'update')->name('ProductClarity.update');
+        Route::delete('product-clarity-master/destroy/{id}', 'destroy')->name('ProductClarity.destroy');
+    });
+
+    Route::controller(\App\Http\Controllers\Jewellery\ProductColorMasterController::class)->group(function(){
+        Route::get('product-color-master/', 'index')->name('product-color.index');
+        Route::get('product-color-master/fetch', 'fetch')->name('product-color.fetch');
+        Route::post('product-color-master/store', 'store')->name('product-color.store');
+        Route::get('product-color-master/edit/{id}', 'edit')->name('product-color.edit');
+        Route::post('product-color-master/update/{id}', 'update')->name('product-color.update');
+        Route::delete('product-color-master/delete/{id}', 'destroy')->name('product-color.delete');
+    });
+
+    Route::controller(\App\Http\Controllers\Jewellery\ProductCutMasterController::class)->group(function(){
+        Route::get('product-cut-master/', 'index')->name('product-cut.index');
+        Route::get('product-cut-master/fetch', 'fetch')->name('product-cut.fetch');
+        Route::post('product-cut-master/store', 'store')->name('product-cut.store');
+        Route::get('product-cut-master/edit/{id}', 'edit')->name('product-cut.edit');
+        Route::post('product-cut-master/update/{id}', 'update')->name('product-cut.update');
+        Route::delete('product-cut-master/delete/{id}', 'destroy')->name('product-cut.delete');
+    });
+
+
+    Route::controller(\App\Http\Controllers\Jewellery\ProductsToMetalTypeController::class)->group(function () {
+        Route::get('ProductsToMetalType/',  'index')->name('ProductsToMetalType.index');
+        Route::get('ProductsToMetalType/fetch',  'fetch')->name('ProductsToMetalType.fetch');
+        Route::get('ProductsToMetalType/show/{id}',  'show')->name('ProductsToMetalType.show');
+        Route::post('ProductsToMetalType/store',  'store')->name('ProductsToMetalType.store');
+        Route::put('ProductsToMetalType/update/{id}',  'update')->name('ProductsToMetalType.update');
+        Route::delete('ProductsToMetalType/delete/{id}',  'destroy')->name('ProductsToMetalType.destroy');
+    });
+
+    Route::controller(\App\Http\Controllers\Jewellery\MetalTypeController::class)->group(function () {
+        Route::get('metal-type/', 'index')->name('metaltype.index');
+        Route::get('metal-type/fetch', 'fetch')->name('metaltype.fetch');
+        Route::post('metal-type/store', 'store')->name('metaltype.store');
+        Route::put('metal-type/update/{id}', 'update')->name('metaltype.update');
+        Route::delete('metal-type/delete/{id}', 'destroy')->name('metaltype.destroy');
+        Route::get('metal-type/show/{id}', 'show')->name('metaltype.show');
+    });
+
+    Route::controller(\App\Http\Controllers\Jewellery\ProductController::class)->group(function(){
+        Route::get('product', 'index')->name('product.index');
+        Route::get('product/create', 'create')->name('product.create');
+        Route::post('product', 'store')->name('product.store');
+        Route::get('product/{id}/edit', 'edit')->name('product.edit');
+        Route::put('product/{id}', 'update')->name('product.update');
+        Route::delete('product/{id}', 'destroy')->name('product.destroy');
+    });
+
+    Route::controller(ProductToStyleCategoryController::class)->group(function () {
+        Route::get('product-to-style-category/', 'index')->name('ptsc.index');
+        Route::post('product-to-style-category/', 'store')->name('ptsc.store');
+        Route::get('product-to-style-category/{id}/edit', 'edit')->name('ptsc.edit');
+        Route::put('product-to-style-category/{id}', 'update')->name('ptsc.update');
+        Route::delete('product-to-style-category/{id}', 'destroy')->name('ptsc.destroy');
+    });
+        Route::controller(\App\Http\Controllers\Jewellery\ProductImageController::class)->group(function(){
+        Route::get('product-image/', [ProductImageController::class, 'index'])->name('product-image.index');
+        Route::post('product-image/store', [ProductImageController::class, 'store'])->name('product-image.store');
+        Route::get('product-image/edit/{id}', [ProductImageController::class, 'edit'])->name('product-image.edit');
+        Route::post('product-image/update/{id}', [ProductImageController::class, 'update'])->name('product-image.update');
+        Route::delete('product-image/delete/{id}', [ProductImageController::class, 'destroy'])->name('product-image.delete');
+    });
+
+        Route::controller(\App\Http\Controllers\Jewellery\ProductToCategoryController::class)->group(function () {
+        Route::get('product-category', 'index')->name('productCategory.index');
+        Route::post('product-category', 'store')->name('productCategory.store');
+        Route::get('product-category/{products_id}/{categories_id}', 'show')->name('productCategory.show');
+        Route::put('product-category/{products_id}/{categories_id}', 'update')->name('productCategory.update');
+        Route::delete('product-category/{products_id}/{categories_id}', [ProductToCategoryController::class, 'destroy'])->name('productCategory.destroy');
+    });
+
+    Route::controller(\App\Http\Controllers\Jewellery\ProductOptionController::class)->group(function(){
+        Route::get('product-options', 'index')->name('product-options.index');
+        Route::get('product-options/fetch', 'fetch')->name('product-options.fetch');
+        Route::post('product-options/store', 'store')->name('product-options.store');
+        Route::get('product-options/edit/{id}', 'edit')->name('product-options.edit');
+        Route::post('product-options/update/{id}', 'update')->name('product-options.update');
+        Route::delete('product-options/delete/{id}', 'destroy')->name('product-options.destroy');
+    });
+
+    Route::controller(\App\Http\Controllers\Jewellery\ProductOptionValueController::class)->group(function(){
+        Route::get('product-option-values', 'index')->name('product-option-values.index');
+        Route::post('product-option-values/store', 'store')->name('product-option-values.store');
+        Route::get('product-option-values/edit/{id}', 'edit')->name('product-option-values.edit');
+        Route::post('product-option-values/update/{id}', 'update')->name('product-option-values.update');
+        Route::delete('product-option-values/delete/{id}', 'destroy')->name('product-option-values.destroy');
+    });
+
+    Route::controller(\App\Http\Controllers\Jewellery\ProductStoneController::class)->group(function(){
+        Route::get('product-stone', 'index')->name('product-stone.index');
+        Route::post('product-stone/store', 'store')->name('product-stone.store');
+        Route::get('product-stone/edit/{id}', 'edit')->name('product-stone.edit');
+        Route::post('product-stone/update/{id}', 'update')->name('product-stone.update');
+        Route::delete('product-stone/delete/{id}', 'destroy')->name('product-stone.delete');
+    });
+
+    Route::controller(\App\Http\Controllers\Jewellery\ProductStyleCategoryController::class)->group(function(){
+        Route::get('product-style-category', 'index')->name('product-style-category.index');
+        Route::post('product-style-category/store', 'store')->name('product-style-category.store');
+        Route::get('product-style-category/edit/{id}', 'edit')->name('product-style-category.edit');
+        Route::post('product-style-category/update/{id}', 'update')->name('product-style-category.update');
+        Route::delete('product-style-category/delete/{id}', 'destroy')->name('product-style-category.delete');
+    });
+
+    Route::controller(\App\Http\Controllers\Jewellery\ProductStyleGroupController::class)->group(function(){
+        Route::get('product-style-group', [ProductStyleGroupController::class, 'index'])->name('product-style-group.index');
+        Route::post('product-style-group/store', [ProductStyleGroupController::class, 'store'])->name('product-style-group.store');
+        Route::get('product-style-group/edit/{id}', [ProductStyleGroupController::class, 'edit'])->name('product-style-group.edit');
+        Route::post('product-style-group/update/{id}', [ProductStyleGroupController::class, 'update'])->name('product-style-group.update');
+        Route::delete('product-style-group/delete/{id}', [ProductStyleGroupController::class, 'destroy'])->name('product-style-group.destroy');
+    });
+
+    Route::controller(\App\Http\Controllers\Jewellery\ShopZonesController::class)->group(function(){
+        Route::get('shop-zones', [ShopZonesController::class, 'index'])->name('shopzones.index');
+        Route::post('shop-zones', [ShopZonesController::class, 'store'])->name('shopzones.store');
+        Route::get('shop-zones/{id}/edit', [ShopZonesController::class, 'edit'])->name('shopzones.edit');
+        Route::put('shop-zones/{id}', [ShopZonesController::class, 'update'])->name('shopzones.update');
+        Route::delete('shop-zones/{id}', [ShopZonesController::class, 'destroy'])->name('shopzones.destroy');
+    });
+
+    Route::controller(\App\Http\Controllers\Jewellery\ProductAssignOptionController::class)->group(function(){
+        Route::get('assign-option/', [ProductAssignOptionController::class, 'index'])->name('assign-option.index');
+        Route::get('assign-option/fetch', [ProductAssignOptionController::class, 'fetch'])->name('assign-option.fetch');
+        Route::post('assign-option/store', [ProductAssignOptionController::class, 'store'])->name('assign-option.store');
+        Route::get('assign-option/show/{productId}/{optionId}', [ProductAssignOptionController::class, 'show'])->name('assign-option.show');
+        Route::post('assign-option/update/{productId}/{optionId}', [ProductAssignOptionController::class, 'update'])->name('assign-option.update');
+        Route::post('assign-option/delete', [ProductAssignOptionController::class, 'destroy'])->name('assign-option.destroy');
+    });
+
+    Route::controller(\App\Http\Controllers\Jewellery\GeoZonesController::class)->group(function(){
+        Route::get('geo-zones/', 'index')->name('geo-zones.index');
+        Route::get('geo-zones/fetch', 'fetch')->name('geo-zones.fetch');
+        Route::post('geo-zones/store', 'store')->name('geo-zones.store');
+        Route::get('geo-zones/show/{id}', 'show')->name('geo-zones.show');
+        Route::post('geo-zones/update/{id}', 'update')->name('geo-zones.update');
+        Route::delete('geo-zones/destroy/{id}', 'destroy')->name('geo-zones.destroy');
+    });
+
+    Route::controller(\App\Http\Controllers\Jewellery\ProductToStyleGroupController::class)->group(function(){
+        Route::get('product-to-style-group/', [ProductToStyleGroupController::class, 'index'])->name('product-to-style-group.index');
+        Route::get('product-to-style-group/fetch', [ProductToStyleGroupController::class, 'fetch'])->name('product-to-style-group.fetch');
+        Route::post('product-to-style-group/store', [ProductToStyleGroupController::class, 'store'])->name('product-to-style-group.store');
+        Route::get('product-to-style-group/show/{id}', [ProductToStyleGroupController::class, 'show'])->name('product-to-style-group.show');
+        Route::post('product-to-style-group/update/{id}', [ProductToStyleGroupController::class, 'update'])->name('product-to-style-group.update');
+        Route::delete('product-to-style-group/delete/{id}', [ProductToStyleGroupController::class, 'destroy'])->name('product-to-style-group.delete');
+    });
+
+    Route::controller(\App\Http\Controllers\Jewellery\ProductToStoneTypeController::class)->group(function(){
+        Route::get('product-to-stone-type', 'index')->name('product-to-stone.index');
+        Route::get('product-to-stone-type/fetch', 'fetch')->name('product-to-stone.fetch');
+        Route::post('product-to-stone-type/store', 'store')->name('product-to-stone.store');
+        Route::get('product-to-stone-type/show/{product}/{stone}', 'show')->name('product-to-stone.show');
+        Route::post('product-to-stone-type/update/{product}/{stone}', 'update')->name('product-to-stone.update');
+        Route::post('product-to-stone-type/delete', 'destroy')->name('product-to-stone.destroy');
+    });
+
+    Route::controller(App\Http\Controllers\Jewellery\ProductToOptionController::class)->group(function () {
+        Route::get('product-to-option', 'index')->name('product_to_option.index');
+        Route::post('product-to-option/store', 'store')->name('product_to_option.store');
+        Route::get('product-to-option/show/{id}', 'show')->name('product_to_option.show');
+        Route::post('product-to-option/update/{id}', 'update')->name('product_to_option.update');
+        Route::post('product-to-option/delete', 'destroy')->name('product_to_option.delete');
+    });
+
+    Route::controller(CountryController::class)->group(function () {
+        Route::get('countries', 'index')->name('countries.index'); // View + AJAX data
+        Route::post('countries/store', 'store')->name('countries.store');
+        Route::get('countries/{id}/edit', 'edit')->name('countries.edit');
+        Route::delete('countries/{id}', 'destroy')->name('countries.destroy');
+    });
+
+    Route::controller(ProductToShapeController::class)->group(function () {
+        Route::get('products-to-shape', 'index')->name('products-to-shape.index');
+        Route::get('products-to-shape/fetch', 'fetch')->name('products-to-shape.fetch');
+        Route::post('products-to-shape', 'store')->name('products-to-shape.store');
+        Route::get('products-to-shape/show/{id}', 'show')->name('products-to-shape.show');
+        Route::put('products-to-shape/update/{id}', 'update')->name('products-to-shape.update');
+        Route::delete('products-to-shape/delete/{id}', 'destroy')->name('products-to-shape.delete');
+    });
+
 });

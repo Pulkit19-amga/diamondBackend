@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('diamond_master', function (Blueprint $table) {
-            $table->foreign('certificate_company')
+            $table->foreign('certificate_company', 'fk_dm_certificate_company')
                   ->references('dl_id')
                   ->on('diamond_lab_master')
                   ->onUpdate('cascade')
@@ -26,7 +26,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('diamond_master', function (Blueprint $table) {
-            $table->dropForeign(['certificate_company']);
+            $table->dropForeign('fk_dm_certificate_company');
         });
     }
 };

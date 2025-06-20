@@ -61,6 +61,10 @@ class DiamondVendorController extends Controller
     public function destroy($id)
     {
         DiamondVendor::destroy($id);
+        if (request()->ajax()) {
+            return response()->json(['success' => true, 'message' => 'Record deleted successfully.']);
+        }
+
         return response()->json(['success' => true]);
     }
 

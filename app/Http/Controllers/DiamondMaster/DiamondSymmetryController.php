@@ -14,7 +14,7 @@ class DiamondSymmetryController extends Controller
             $symmetry = DiamondSymmetry::all();
             return response()->json($symmetry);
         }
-        return view('admin.DiamondMaster.symmetry.index');
+        return view('admin.DiamondMaster.Symmetry.index');
     }
 
     public function store(Request $request)
@@ -44,8 +44,9 @@ class DiamondSymmetryController extends Controller
         $symmetry = DiamondSymmetry::findOrFail($id);
         $symmetry->delete();
         if (request()->ajax()) {
-            return response()->json(['message' => 'Record deleted successfully.'], 200);
+            return response()->json(['success' => true, 'message' => 'Record deleted successfully.']);
         }
+
 
         return redirect()->route('symmetry.index')
         ->with('success', 'Record deleted successfully.');
@@ -56,7 +57,7 @@ class DiamondSymmetryController extends Controller
         if (request()->ajax()) {
             return response()->json($id);
         }
-        return view('admin.DiamondMaster.symmetry.index', compact('id'));
+        return view('admin.DiamondMaster.Symmetry.index', compact('id'));
     }
     private function validationRules()
     {

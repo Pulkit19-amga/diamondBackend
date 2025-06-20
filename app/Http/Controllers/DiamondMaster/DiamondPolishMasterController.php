@@ -107,6 +107,10 @@ class DiamondPolishMasterController extends Controller
     {
         $polish = DiamondPolish::findOrFail($id);
         $polish->delete();
+        if (request()->ajax()) {
+            return response()->json(['success' => true, 'message' => 'Record deleted successfully.']);
+        }
+
         return redirect()->route('diamondpolish.index')
             ->with('success', 'Polish deleted successfully.');
     }

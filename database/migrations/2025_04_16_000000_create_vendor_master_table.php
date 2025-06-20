@@ -65,7 +65,7 @@ class CreateVendorMasterTable extends Migration
             $table->string('offer_days', 20)->nullable();
             $table->tinyInteger('keep_price_same_ab')->default(0);
             $table->tinyInteger('cc_fee')->default(0);
-            $table->dateTime('date_addded')->nullable();
+            $table->dateTime('date_added')->nullable();
             $table->integer('added_by')->nullable();
             $table->dateTime('date_updated')->nullable();
             $table->integer('update_by')->nullable();

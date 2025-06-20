@@ -68,4 +68,5 @@ class DiamondVendor extends Model
         'date_updated',
         'update_by'
     ];
+
 }

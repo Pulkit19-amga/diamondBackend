@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\DiamondMaster;
 
 class DiamondFlourescence extends Model
 {
@@ -22,5 +23,10 @@ class DiamondFlourescence extends Model
         'date_added',
         'date_modify',
     ];
+
+    public function diamondMasters()
+    {
+        return $this->hasMany(DiamondMaster::class);
+    }
 
 }
